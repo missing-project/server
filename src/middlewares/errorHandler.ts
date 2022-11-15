@@ -1,8 +1,7 @@
 import { ErrorRequestHandler } from 'express';
+import { errorResponse } from '../utils';
 
-const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.log('\x1b[33m%s\x1b[0m', err.stack);
-  res.status(400).json({ result: 'error', reason: err.message });
+  errorResponse(res, 'BADREQUEST', err.message);
 };
-
-export { errorHandler };

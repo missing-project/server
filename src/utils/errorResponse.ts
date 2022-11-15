@@ -6,14 +6,23 @@ export const errorResponse = (
   type: ErrorType,
   message?: string
 ) => {
+  let statusCode: number = 500;
   switch (type) {
     case 'FORBIDDEN':
-      return res.status(403).json({ message });
+      statusCode = 403;
+      break;
     case 'NOTFOUND':
-      return res.status(404).json({ message });
-    case 'SERVER':
-      return res.status(500).json({ message });
+      statusCode = 404;
+      break;
+    case 'BADREQUEST':
+      statusCode = 400;
+      break;
+    case 'SERVERERROR':
+      statusCode = 500;
+      break;
     default:
-      return res.status(500).json({ message });
+      break;
   }
+
+  res.status(statusCode).json({ message });
 };

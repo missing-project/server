@@ -5,7 +5,7 @@ export interface UserInterface {
   password: string;
 }
 
-const UserSchema = new Schema<UserInterface>(
+export const UserSchema = new Schema<UserInterface>(
   {
     email: {
       type: String,
@@ -20,5 +20,3 @@ const UserSchema = new Schema<UserInterface>(
     timestamps: true,
   }
 );
-
-export default UserSchema;

@@ -1,5 +1,3 @@
-import { Request, Response } from 'express';
-
 import { userService } from '../services';
 import { AsyncRequestHandler } from '../types';
 
@@ -13,15 +11,15 @@ interface userControllerInterface {
 req, res 활용하여 client와의 상호작용만을 다루는 레이어 입니다.
 */
 
-const userController: userControllerInterface = {
+export const userController: userControllerInterface = {
   async getUser(req, res) {
-    const users = await userService.findUsers();
+    const { uid } = req.params;
+    const users = await userService.findUser(uid);
     res.json({ users });
   },
 
   async postUser(req, res) {
-    throw new Error('에러 테스트 입니다.');
+    const user = await userService.createUser(req.body);
+    res.json({ user });
   },
 };
-
-export { userController };
