@@ -6,7 +6,7 @@ import { errorResponse } from '../utils';
 회원 쪽 담당하시는 분이 해당 라이브러리가 프로젝트에 적합할 것 같은지 확인 한번 해주시면 감사하겠습니다
 */
 
-function loginRequired(req: Request, res: Response, next: NextFunction) {
+export function loginRequired(req: Request, res: Response, next: NextFunction) {
   const userToken = req.headers.authorization?.split(' ')[1];
   if (!userToken || userToken === 'null') {
     console.log('서비스 사용 요청이 있습니다.하지만, Authorization 토큰: 없음');
@@ -29,5 +29,3 @@ function loginRequired(req: Request, res: Response, next: NextFunction) {
     return;
   }
 }
-
-export { loginRequired };

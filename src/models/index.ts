@@ -1,17 +1,21 @@
-import { model } from 'mongoose';
-import UserSchema, { UserInterface } from './schemas/users';
+import { Model, model } from 'mongoose';
+import { UserSchema, UserInterface } from './schemas/user';
 
-interface ModelInterface {
-  [key: string]: string;
+interface ModelIdentifierInterface {
+  user: string;
+  case: string;
 }
 
-const modelIdentifier: ModelInterface = {
+export const modelIdentifier: ModelIdentifierInterface = {
   user: 'user',
-  post: 'post',
+  case: 'case',
 };
 
 const userModel = model<UserInterface>(modelIdentifier.user, UserSchema);
-// const postModel = model<PostInterface>(modelIdentifier.post, PostSchema);
-// 이런 식으로 아래로 붙여주시고 아래 export 추가해주세요
+// const caseModel = model<CaseInterface>(modelIdentifier.case, CaseSchema);
 
-export { modelIdentifier, userModel, UserInterface };
+type userModelType = Model<UserInterface>;
+// type caseModelType = Model<CaseInterface>;
+
+// 이런 식으로 아래로 붙여주시고 아래 export 추가해주세요
+export { userModel, userModelType };
