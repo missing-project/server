@@ -17,6 +17,8 @@
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "husky": ">=7",
+    "lint-staged": ">=10",
     "nodemon": "^2.0.20",
     "prettier": "^2.7.1",
     "ts-node": "^10.9.1",
@@ -26,7 +28,8 @@
     "start": "node dist/app.js",
     "build": "tsc -p .",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "prepare": "husky install"
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",
@@ -36,5 +39,8 @@
     "http-errors": "^2.0.0",
     "mongoose": "^6.7.2",
     "morgan": "^1.10.0"
+  },
+  "lint-staged": {
+    "*.{ts, tsx}": "eslint --max-warnings=0"
   }
 }
