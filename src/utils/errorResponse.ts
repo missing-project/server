@@ -6,7 +6,7 @@ export const errorResponse = (
   type: ErrorType,
   message?: string
 ) => {
-  let statusCode: number;
+  let statusCode: number = 500;
   switch (type) {
     case 'FORBIDDEN':
       statusCode = 403;
@@ -21,7 +21,6 @@ export const errorResponse = (
       statusCode = 500;
       break;
     default:
-      statusCode = 500;
       break;
   }
 
