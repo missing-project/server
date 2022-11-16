@@ -1,9 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 
-export const indexRouter = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const indexRouter = (req: Request, res: Response) => {
   res.send('welcome!');
 };

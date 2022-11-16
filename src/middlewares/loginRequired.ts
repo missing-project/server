@@ -20,7 +20,7 @@ export function loginRequired(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
+    // const secretKey = process.env.JWT_SECRET_KEY || 'secret-key';
     // const jwtDecoded = jwt.verify(userToken, secretKey);
     next();
   } catch (error) {
