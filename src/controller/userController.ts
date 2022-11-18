@@ -4,6 +4,10 @@ import { AsyncRequestHandler } from '../types';
 interface userControllerInterface {
   getUser: AsyncRequestHandler;
   postUser: AsyncRequestHandler;
+  deleteUser: AsyncRequestHandler;
+  updateUser: AsyncRequestHandler;
+  activeUser: AsyncRequestHandler;
+  inactiveUser: AsyncRequestHandler;
 }
 
 /* 
@@ -22,4 +26,28 @@ export const userController: userControllerInterface = {
     const user = await userService.createUser(req.body);
     res.json({ user });
   },
+
+  async updateUser(req, res){
+    const user = await userService.updateUser(req.body);
+    res.json({user});
+  },
+
+  async deleteUser(req, res){
+    const { uid } = req.params
+    const user = await userService.deleteUser(uid);
+    res.json({user});
+  },
+
+  async activeUser(req, res){
+    const { uid } = req.params;
+    const user = await userService.activeUser(uid);
+    res.json({user})
+  }, 
+
+  async inactiveUser(req, res){
+    const { uid } = req.params;
+    const user = await userService.activeUser(uid);
+    res.json({user})
+  } 
+
 };
