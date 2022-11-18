@@ -1,6 +1,9 @@
 import { Model, model } from 'mongoose';
 import { UserSchema, UserInterface } from './schemas/user';
 
+// import * as dotenv from "dotenv";
+// const envFound = dotenv.config({path:"../../.env"});
+// console.log(process.env.MONGODB_URI);
 interface ModelIdentifierInterface {
   user: string;
   case: string;
