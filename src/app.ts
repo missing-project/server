@@ -1,3 +1,6 @@
+/* 파일 전체에 no-console 룰 사용 안함, 파일 최상단에 선언 */
+/* eslint-disable no-console */
+
 import express from 'express';
 import cors from 'cors';
 import createError from 'http-errors';
@@ -9,6 +12,8 @@ import { port, mongoDBUri } from './config';
 import { errorHandler, loginRequired } from './middlewares';
 import { indexRouter, userRouter } from './routers';
 import { endPoint } from './constants';
+import { dbService } from './services';
+import cron from 'node-cron';
 
 const app = express();
 
@@ -33,5 +38,9 @@ app.use(function (req, res, next) {
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Server listening on port: ${port}`);
+  logger(`Server listening on port: ${port}`);
+});
+
+cron.schedule('10 * * * * *', async () => {
+  await dbService.getCase();
 });
