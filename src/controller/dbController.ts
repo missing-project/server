@@ -1,13 +1,13 @@
-// import { dbService } from '../services';
-// import { AsyncRequestHandler } from '../types';
+import { dbService } from '../services';
+import { AsyncRequestHandler } from '../types';
 
-// interface dbControllerInterface {
-//   postCase: AsyncRequestHandler;
-// }
+interface dbControllerInterface {
+  postCase: AsyncRequestHandler;
+}
 
-// export const dbController: dbControllerInterface = {
-//   async postCase(req, res) {
-//     const user = await dbService.createCase(req.body);
-//     res.json({ user });
-//   },
-// };
+export const dbController: dbControllerInterface = {
+  async postCase(req, res) {
+    const user = await dbService.createCase(req.body);
+    res.json({ user });
+  },
+};

@@ -1,2 +1,2 @@
 export * from './userController';
-// export * from './dbController';
+export * from './dbController';

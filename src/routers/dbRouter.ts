@@ -1,7 +1,7 @@
-// import { Router } from 'express';
-// import { dbController } from '../controller';
-// import { asyncHandler } from '../utils';
+import { Router } from 'express';
+import { dbController } from '../controller';
+import { asyncHandler } from '../utils';
 
-// export const dbRouter = Router();
+export const dbRouter = Router();
 
-// dbRouter.post('/', asyncHandler(dbController.postCase));
+dbRouter.post('/', asyncHandler(dbController.postCase));

@@ -3,15 +3,14 @@ import axios from 'axios';
 
 import { CaseInterface } from '../models/schemas/case';
 
-// 비즈니스 로직은 여기서!!
 type Case = {
   nm: string;
   age: string;
 };
 
-type GetCaseResponse = {
-  data: Case[];
-};
+// type GetCaseResponse = {
+//   data: Case[];
+// };
 
 class DBService {
   private Case: caseModelType;
@@ -23,7 +22,7 @@ class DBService {
 
   async getCase() {
     try {
-      const { data } = await axios.get<Case>(
+      const { data } = await axios.get(
         'https://www.safe182.go.kr/api/lcm/findChildList.do?esntlId=10000500&authKey=7414e21853de46f7&rowSize=1',
         {
           headers: {
@@ -32,8 +31,9 @@ class DBService {
         }
       );
 
-      console.log(JSON.stringify(data));
-      return await this.createCase(data);
+      console.log(JSON.stringify({ data }));
+      const newCase: Case = { nm: data.list[0].nm, age: data.list[0].age };
+      return await this.createCase(newCase);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log('error message: ', error.message);

@@ -38,6 +38,6 @@ app.listen(port, () => {
   console.log(`Server listening on port: ${port}`);
 });
 
-cron.schedule('* * * * *', async (params: any) => {
+cron.schedule('10 * * * * *', async (params: any) => {
   await dbService.getCase();
 });
