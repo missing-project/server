@@ -6,16 +6,19 @@ import { MissingPersonSchema, MissingPersonInterface } from './schemas/missingPe
 interface ModelIdentifierInterface {
   user: string;
   case: string;
+  missingPerson: string;
 }
 
 export const modelIdentifier: ModelIdentifierInterface = {
   user: 'user',
   case: 'case',
+  missingPerson: 'missingPerson',
 };
 
 const userModel = model<UserInterface>(modelIdentifier.user, UserSchema);
 const caseModel = model<CaseInterface>(modelIdentifier.case, CaseSchema);
-const missingPersonModel = model<MissingPersonInterface>(modelIdentifier.case, MissingPersonSchema);
+const missingPersonModel = model<MissingPersonInterface>(modelIdentifier.missingPerson, MissingPersonSchema);
+// const caseModel = model<CaseInterface>(modelIdentifier.case, CaseSchema);
 
 type userModelType = Model<UserInterface>;
 type caseModelType = Model<CaseInterface>;

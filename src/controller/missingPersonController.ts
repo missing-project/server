@@ -19,9 +19,7 @@ export const missingPersonController: missingPersonControllerInterface = {
     
     async getMissingPersons(req, res) {
     const MissingPersons = await missingPersonService.findMissingPersons();
-    if (!MissingPersons) {
-        throw new Error('등록된 사건이 없습니다.');
-    }
+
     res.json(MissingPersons);
 },
 

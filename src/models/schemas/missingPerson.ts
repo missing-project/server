@@ -11,7 +11,7 @@ export interface MissingPersonInterface {
     age1: number;
     age2: number;
     file2: string; //사진
-    etcSpfeatr: string; //신체특ㄱ징
+    etcSpfeatr: string; //신체특징
     occrAdres: string; //발생장소
 }
 
