@@ -1,24 +1,33 @@
-import { missingPersonModel, missingPersonModelType } from '../models';
-import { MissingPersonInterface } from '../models/schemas/missingPerson';
+import { caseModel, caseModelType, } from '../models';
+import { CaseInterface } from '../models/schemas/case';
 
 // 비즈니스 로직은 여기서!!
 class MissingPersonService {
-    private MissingPerson: missingPersonModelType;
+    private MissingPerson: caseModelType;
 
   // 의존성 주입
-    constructor(missingPersonModel: missingPersonModelType) {
+    constructor(missingPersonModel: caseModelType) {
     this.MissingPerson = missingPersonModel;
     }
     //사건 등록
-    async createMissingPerson(missingPersonInfo :MissingPersonInterface) {
+    async createMissingPerson(missingPersonInfo :CaseInterface) {
       return await this.MissingPerson.create(missingPersonInfo);
     }
     //모든 사건 get
     async findMissingPersons() {
       return await this.MissingPerson.find();
     }
+    //특정(하나) 사건 get
+    async findMissingPerson(caseid: string) {
+      return await this.MissingPerson.findOne({_id: caseid});
+    }
+
+    //사건 삭제
+    async deleteMissingPerson(caseid: string) {
+      return await this.MissingPerson.findOneAndDelete({_id : caseid});
+    }
 }
 
-const missingPersonService = new MissingPersonService(missingPersonModel);
+const missingPersonService = new MissingPersonService(caseModel);
 
 export { missingPersonService };

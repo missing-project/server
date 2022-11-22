@@ -4,6 +4,8 @@ import { AsyncRequestHandler } from '../types';
 interface missingPersonControllerInterface {
     getMissingPersons: AsyncRequestHandler;
     postMissingPerson: AsyncRequestHandler;
+    deleteOneMissingPerson: AsyncRequestHandler;
+    findOneMissingPerson: AsyncRequestHandler;
 }
 
 /* 
@@ -18,9 +20,20 @@ export const missingPersonController: missingPersonControllerInterface = {
     },
     
     async getMissingPersons(req, res) {
-    const MissingPersons = await missingPersonService.findMissingPersons();
+        const MissingPersons = await missingPersonService.findMissingPersons();
+        res.json(MissingPersons);
+    },
 
-    res.json(MissingPersons);
-},
+    async deleteOneMissingPerson(req, res) {
+        const { caseid } = req.params;
+        const deleteOne = await missingPersonService.deleteMissingPerson(caseid);
+        res.json(deleteOne);
+    },
+
+    async findOneMissingPerson(req, res) {
+        const { caseid } = req.params;
+        const findOne = await missingPersonService.findMissingPerson(caseid);
+        res.json(findOne);
+    }
 
 };
