@@ -10,7 +10,10 @@ class Api {
   constructor(caseModel: caseModelType) {
     this.Case = caseModel;
   }
-
+  async createNewCase() {
+    await this.Case.deleteMany({});
+    return await this.getCase();
+  }
   async getCase() {
     try {
       const { data } = await axios.get(openApiUri, {
@@ -45,7 +48,9 @@ class Api {
   }
 
   async createCase(data: CaseArrayInterface) {
-    return await this.Case.insertMany(data.cases);
+    const newCase = await this.Case.insertMany(data.cases);
+    logger.info(newCase);
+    return newCase;
   }
 }
 
