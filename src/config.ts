@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-
+import { logger } from './winston';
 const envFound = dotenv.config();
 
 if (envFound.error) {
@@ -11,8 +11,11 @@ if (process.env.MONGODB_URI === undefined) {
     '어플리케이션을 시작하려면 MONGODB_URI 환경변수가 필요합니다.'
   );
 }
+if (process.env.OPEN_API === undefined) {
+  logger.error('api uri없음');
+}
 
 const port = parseInt(process.env.PORT ?? '8080', 10);
-const mongoDBUri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-
-export { port, mongoDBUri };
+const mongoDBUri = process.env.MONGODB_URI;
+const openApiUri: string = process.env.OPEN_API;
+export { port, mongoDBUri, openApiUri };

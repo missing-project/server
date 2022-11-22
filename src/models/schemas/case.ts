@@ -10,8 +10,11 @@ export interface CaseInterface {
   sexdstnDscd?: string;
   occrAdres?: string;
   img?: string;
+  url?: string;
 }
-
+export interface CaseArrayInterface {
+  cases: CaseInterface[];
+}
 export const CaseSchema = new Schema<CaseInterface>(
   {
     nm: {
@@ -42,6 +45,9 @@ export const CaseSchema = new Schema<CaseInterface>(
     img: {
       type: String,
       required: false,
+    },
+    url: {
+      type: String,
     },
   },
   {
