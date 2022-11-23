@@ -62,7 +62,7 @@ class UserService {
     }
 
     // 토큰 생성
-    const secretKey = process.env.JWT_SECRETKEY;
+    const secretKey = process.env.JWT_SECRET_KEY;
     const accessPayload = {uid: user.uid, role:user.role, device: user.device }
     const refreshPayload = {device: user.role }
     
