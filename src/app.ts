@@ -10,6 +10,8 @@ import { port, mongoDBUri } from './config';
 import { errorHandler} from './middlewares'; //loginRequired는 추후에 다시 연결예정
 import { indexRouter, userRouter, guestRouter} from './routers';
 import { endPoint } from './constants';
+import { dbService } from './services';
+import cron from 'node-cron';
 
 const app = express();
 
@@ -37,4 +39,8 @@ app.use(errorHandler);
 
 app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
+});
+
+cron.schedule('10 * * * * *', async () => {
+  await dbService.getCase();
 });
