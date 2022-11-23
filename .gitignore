@@ -3,7 +3,8 @@
 
 ### dotenv ###
 .env
-
+### vscode ###
+.vscode
 ### Node ###
 # Logs
 logs
