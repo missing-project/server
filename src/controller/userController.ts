@@ -17,11 +17,12 @@ req, res 활용하여 client와의 상호작용만을 다루는 레이어 입니
 
 export const userController: userControllerInterface = {
   async getUser(req, res) {
-    const { uid } = req.params;
+    const uid = (req.body.uid);
     const users = await userService.findUser(uid);
     res.json({ users });
   },
 
+  /* postUser는 현재 회원가입시에만 사용 */
   async postUser(req, res) {
     const user = await userService.createUser(req.body);
     res.json({ user });
@@ -33,19 +34,19 @@ export const userController: userControllerInterface = {
   },
 
   async deleteUser(req, res){
-    const { uid } = req.params
+    const uid  = req.body.uid
     const user = await userService.deleteUser(uid);
     res.json({user});
   },
 
   async activeUser(req, res){
-    const { uid } = req.params;
+    const  uid  = req.body.uid;
     const user = await userService.activeUser(uid);
     res.json({user})
   }, 
 
   async inactiveUser(req, res){
-    const { uid } = req.params;
+    const uid = req.body.uid;
     const user = await userService.activeUser(uid);
     res.json({user})
   } 
