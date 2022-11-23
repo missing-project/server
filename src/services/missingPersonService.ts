@@ -18,13 +18,13 @@ class MissingPersonService {
       return await this.MissingPerson.find();
     }
     //특정(하나) 사건 get
-    async findMissingPerson(caseid: string) {
-      return await this.MissingPerson.findOne({_id: caseid});
+    async findMissingPerson(caseId: string) {
+      return await this.MissingPerson.findOne({_id: caseId});
     }
 
     //사건 삭제
-    async deleteMissingPerson(caseid: string) {
-      return await this.MissingPerson.findOneAndDelete({_id : caseid});
+    async deleteMissingPerson(caseId: string) {
+      return await this.MissingPerson.findOneAndDelete({_id : caseId});
     }
 }
 

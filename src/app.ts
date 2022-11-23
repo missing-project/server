@@ -8,7 +8,7 @@ import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
 import { errorHandler, loginRequired } from './middlewares';
-import { indexRouter, missingPersonRouter, userRouter } from './routers';
+import { indexRouter, missingPersonRouter, userRouter, bookmarkRouter } from './routers';
 import { endPoint } from './constants';
 import { dbService } from './services';
 import cron from 'node-cron';
@@ -29,6 +29,7 @@ app.use(cookieParser());
 app.get(endPoint.index, indexRouter);
 app.use(endPoint.user, loginRequired, userRouter);
 app.use(endPoint.missingPerson, missingPersonRouter);
+app.use(endPoint.bookmark, bookmarkRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));

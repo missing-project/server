@@ -18,5 +18,6 @@ export const UserSchema = new Schema<UserInterface>(
   },
   {
     timestamps: true,
-  }
+    collection: 'user',
+  },
 );

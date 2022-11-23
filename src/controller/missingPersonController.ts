@@ -25,14 +25,14 @@ export const missingPersonController: missingPersonControllerInterface = {
     },
 
     async deleteOneMissingPerson(req, res) {
-        const { caseid } = req.params;
-        const deleteOne = await missingPersonService.deleteMissingPerson(caseid);
+        const { caseId } = req.params;
+        const deleteOne = await missingPersonService.deleteMissingPerson(caseId);
         res.json(deleteOne);
     },
 
     async findOneMissingPerson(req, res) {
-        const { caseid } = req.params;
-        const findOne = await missingPersonService.findMissingPerson(caseid);
+        const { caseId } = req.params;
+        const findOne = await missingPersonService.findMissingPerson(caseId);
         res.json(findOne);
     }
 

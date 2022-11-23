@@ -46,6 +46,7 @@ export const CaseSchema = new Schema<CaseInterface>(
   },
   {
     timestamps: true,
+    collection: 'case',
   }
 );
 // todo sexdstnDscd, writngTrgetDscd enum
