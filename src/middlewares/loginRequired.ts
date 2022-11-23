@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { errorResponse } from '../utils';
+import { logger } from '../winston';
 // import jwt from "jsonwebtoken";
 /* 
 저희가 어플 서비스인데 라이브러리 이름이 jsonwebtoken 이라서 
@@ -9,7 +10,9 @@ import { errorResponse } from '../utils';
 export function loginRequired(req: Request, res: Response, next: NextFunction) {
   const userToken = req.headers.authorization?.split(' ')[1];
   if (!userToken || userToken === 'null') {
-    console.log('서비스 사용 요청이 있습니다.하지만, Authorization 토큰: 없음');
+    logger.error(
+      '서비스 사용 요청이 있습니다.하지만, Authorization 토큰: 없음'
+    );
     errorResponse(
       res,
       'FORBIDDEN',

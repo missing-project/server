@@ -6,12 +6,15 @@ export interface CaseInterface {
   ageNow?: number;
   accrde?: Date;
   alldressingDscd?: string;
-  writngTrgetDscd?: number;
+  writngTrgetDscd?: string;
   sexdstnDscd?: string;
   occrAdres?: string;
   img?: string;
+  url?: string;
 }
-
+export interface CaseArrayInterface {
+  cases: CaseInterface[];
+}
 export const CaseSchema = new Schema<CaseInterface>(
   {
     nm: {
@@ -31,10 +34,11 @@ export const CaseSchema = new Schema<CaseInterface>(
       type: String,
     },
     writngTrgetDscd: {
-      type: Number,
+      type: String,
     },
     sexdstnDscd: {
       type: String,
+      enum: ['남자', '여자'],
     },
     occrAdres: {
       type: String,
@@ -42,6 +46,9 @@ export const CaseSchema = new Schema<CaseInterface>(
     img: {
       type: String,
       required: false,
+    },
+    url: {
+      type: String,
     },
   },
   {

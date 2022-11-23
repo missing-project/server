@@ -1,4 +1,4 @@
 export * from './userService';
-export * from './dbService';
 export * from './missingPersonService';
 export * from './bookmarkService';
+export * from '../utils/api';
