@@ -1,4 +1,3 @@
-// logger.ts
 import winston, { transports, format } from 'winston';
 interface TransformableInfo {
   level: string;

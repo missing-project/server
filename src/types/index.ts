@@ -7,3 +7,4 @@ export type AsyncRequestHandler = (
 ) => Promise<any>;
 
 export type ErrorType = 'FORBIDDEN' | 'NOTFOUND' | 'SERVERERROR' | 'BADREQUEST';
+
