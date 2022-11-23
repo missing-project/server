@@ -18,7 +18,7 @@ export const guestController: guestControllerInterface = {
   async loginUser(req, res) {
     const uid = req.body.uid;
     const password = req.body.password;
-    const user = await userService.loginUser({uid,password});
+    const user = await userService.loginUser({ uid, password });
     res.json({ user });
   },
 

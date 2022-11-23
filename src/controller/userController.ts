@@ -17,7 +17,7 @@ req, res 활용하여 client와의 상호작용만을 다루는 레이어 입니
 
 export const userController: userControllerInterface = {
   async getUser(req, res) {
-    const uid = (req.body.uid);
+    const uid = req.body.uid;
     const users = await userService.findUser(uid);
     res.json({ users });
   },
@@ -28,27 +28,26 @@ export const userController: userControllerInterface = {
     res.json({ user });
   },
 
-  async updateUser(req, res){
+  async updateUser(req, res) {
     const user = await userService.updateUser(req.body);
-    res.json({user});
+    res.json({ user });
   },
 
-  async deleteUser(req, res){
-    const uid  = req.body.uid
+  async deleteUser(req, res) {
+    const uid = req.body.uid;
     const user = await userService.deleteUser(uid);
-    res.json({user});
+    res.json({ user });
   },
 
-  async activeUser(req, res){
-    const  uid  = req.body.uid;
-    const user = await userService.activeUser(uid);
-    res.json({user})
-  }, 
-
-  async inactiveUser(req, res){
+  async activeUser(req, res) {
     const uid = req.body.uid;
     const user = await userService.activeUser(uid);
-    res.json({user})
-  } 
+    res.json({ user });
+  },
 
+  async inactiveUser(req, res) {
+    const uid = req.body.uid;
+    const user = await userService.activeUser(uid);
+    res.json({ user });
+  },
 };

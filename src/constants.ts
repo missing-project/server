@@ -7,5 +7,5 @@ interface EndPointInterface {
 export const endPoint: EndPointInterface = {
   index: '/',
   user: '/user',
-  guest: '/guest'
+  guest: '/guest',
 };

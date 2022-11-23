@@ -30,7 +30,8 @@
     "start": "node dist/app.js",
     "build": "tsc -p .",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prettier:fix": "prettier --write './src/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@types/winston": "^2.4.4",
@@ -48,6 +49,9 @@
     "winston": "^3.8.2"
   },
   "lint-staged": {
-    "*.{ts, tsx}": "eslint --max-warnings=0"
+    "*.{ts, tsx}": [
+      "prettier --write",
+      "eslint --max-warnings=0"
+    ]
   }
 }
