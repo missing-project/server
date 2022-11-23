@@ -4,7 +4,7 @@ export interface CaseInterface {
   nm: string;
   age?: number;
   ageNow?: number;
-  accrde?: Date;
+  occrDate?: Date;
   alldressingDscd?: string;
   writngTrgetDscd?: string;
   sexdstnDscd?: string;
@@ -27,7 +27,7 @@ export const CaseSchema = new Schema<CaseInterface>(
     ageNow: {
       type: Number,
     },
-    accrde: {
+    occrDate: {
       type: Date,
     },
     alldressingDscd: {

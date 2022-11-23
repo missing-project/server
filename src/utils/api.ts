@@ -2,8 +2,8 @@ import { caseModel, caseModelType } from '../models';
 import { CaseInterface, CaseArrayInterface } from '../models/schemas/case';
 import axios from 'axios';
 import { logger } from '../winston';
-import { openApiUri } from '../config';
-
+import { openApiUri, apiImg, apiUrl } from '../config';
+import { parseDate } from './components/utils';
 class Api {
   private Case: caseModelType;
 
@@ -23,12 +23,9 @@ class Api {
       });
       const cases: CaseInterface[] = data.list.map((obj: any) => {
         const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : '';
-        obj[
-          'img'
-        ] = `https://www.safe182.go.kr/api/lcm/imgView.do?msspsnIdntfccd=${num}`;
-        obj[
-          'url'
-        ] = `https://www.safe182.go.kr/home/lcm/lcmMssGet.do?gnbMenuCd=014000000000&lnbMenuCd=014001000000&rptDscd=2&msspsnIdntfccd=${num}`;
+        obj['occrDate'] = parseDate(obj.occrde);
+        obj['img'] = apiImg + num;
+        obj['url'] = apiUrl + num;
         return obj;
       });
       const newCase: CaseArrayInterface = {
@@ -49,7 +46,6 @@ class Api {
 
   async createCase(data: CaseArrayInterface) {
     const newCase = await this.Case.insertMany(data.cases);
-    logger.info(newCase);
     return newCase;
   }
 }
