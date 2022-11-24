@@ -40,5 +40,9 @@ app.listen(port, () => {
 });
 
 cron.schedule('10 * * * * *', async () => {
-  await api.createNewCase();
+  try {
+    await api.createNewCase(1);
+  } catch (e) {
+    logger.error(e);
+  }
 });

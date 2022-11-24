@@ -10,13 +10,37 @@ class Api {
   constructor(caseModel: caseModelType) {
     this.Case = caseModel;
   }
-  async createNewCase() {
-    await this.Case.deleteMany({});
-    return await this.getCase();
-  }
-  async getCase() {
+
+  async createNewCase(page: number) {
     try {
-      const { data } = await axios.get(openApiUri, {
+      await this.deleteCase();
+      await this.case(page);
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
+  async case(page: number): Promise<any> {
+    const getSize = (await this.getCaseByPage(page)).length;
+    if (getSize === 100) {
+      return await this.case(page + 1);
+    } else {
+      return;
+    }
+  }
+
+  async deleteCase() {
+    try {
+      return await this.Case.deleteMany({});
+    } catch (e) {
+      logger.error('fail deleteCase', e);
+    }
+  }
+
+  async getCaseByPage(page: number) {
+    try {
+      const uri = openApiUri + page;
+      const { data } = await axios.get(uri, {
         headers: {
           Accept: 'application/json',
         },
@@ -45,8 +69,7 @@ class Api {
   }
 
   async createCase(data: CaseArrayInterface) {
-    const newCase = await this.Case.insertMany(data.cases);
-    return newCase;
+    return await this.Case.insertMany(data.cases);
   }
 }
 
