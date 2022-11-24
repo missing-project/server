@@ -4,7 +4,19 @@ import { asyncHandler } from '../utils';
 
 export const missingPersonRouter = Router();
 
-missingPersonRouter.get('/', asyncHandler(missingPersonController.getMissingPersons));
-missingPersonRouter.post('/', asyncHandler(missingPersonController.postMissingPerson));
-missingPersonRouter.delete('/:caseid', asyncHandler(missingPersonController.deleteOneMissingPerson));
-missingPersonRouter.get('/:caseid', asyncHandler(missingPersonController.findOneMissingPerson));
+missingPersonRouter.get(
+  '/',
+  asyncHandler(missingPersonController.getMissingPersons)
+);
+missingPersonRouter.post(
+  '/',
+  asyncHandler(missingPersonController.postMissingPerson)
+);
+missingPersonRouter.delete(
+  '/:caseId',
+  asyncHandler(missingPersonController.deleteOneMissingPerson)
+);
+missingPersonRouter.get(
+  '/:caseId',
+  asyncHandler(missingPersonController.findOneMissingPerson)
+);
