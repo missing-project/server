@@ -20,7 +20,7 @@ class UserService {
   }
 
   async createUser(userInfo: UserInterface) {
-    const { uid, email, password, name, device } = userInfo;
+    const { uid, email, password, device } = userInfo;
 
     const userEmailValidation = await this.User.findOne({ email: email });
     if (userEmailValidation) {
@@ -32,7 +32,6 @@ class UserService {
       uid,
       email,
       password: hashedPassword,
-      name,
       device,
       role: 'user',
       active: true,
