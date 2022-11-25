@@ -15,7 +15,7 @@ class MissingPersonService {
     }
     //모든 사건 get
     async findMissingPersons() {
-      return await this.MissingPerson.find();
+      return await this.MissingPerson.find().sort({occrDate:-1});
     }
     //특정(하나) 사건 get
     async findMissingPerson(caseId: string) {
