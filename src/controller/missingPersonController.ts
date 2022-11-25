@@ -16,7 +16,7 @@ req, res 활용하여 client와의 상호작용만을 다루는 레이어 입니
 export const missingPersonController: missingPersonControllerInterface = {
     async postMissingPerson(req, res) {
         const missingPerson = await missingPersonService.createMissingPerson(req.body);
-        res.json(missingPerson);
+        res.json({missingPerson});
     },
     
     async getMissingPersons(req, res) {
@@ -27,13 +27,13 @@ export const missingPersonController: missingPersonControllerInterface = {
     async deleteOneMissingPerson(req, res) {
         const { caseId } = req.params;
         const deleteOne = await missingPersonService.deleteMissingPerson(caseId);
-        res.json(deleteOne);
+        res.json({deleteOne});
     },
 
     async findOneMissingPerson(req, res) {
         const { caseId } = req.params;
         const findOne = await missingPersonService.findMissingPerson(caseId);
-        res.json(findOne);
+        res.json({findOne});
     }
 
 };
