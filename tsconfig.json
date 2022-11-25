@@ -11,6 +11,10 @@
     "strict": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "paths": {
+      "*": ["./node_modules/@types/*"]
+    },
+    "typeRoots": ["./@types", "./node_modules/@types"]
   }
 }

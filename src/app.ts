@@ -7,8 +7,8 @@ import Logger from 'morgan';
 import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
-import { errorHandler, loginRequired } from './middlewares';
-import { indexRouter, userRouter } from './routers';
+import { errorHandler } from './middlewares'; //loginRequired는 추후에 다시 연결예정
+import { indexRouter, userRouter, guestRouter } from './routers';
 import { endPoint } from './constants';
 import { api } from './utils';
 import cron from 'node-cron';
@@ -27,7 +27,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get(endPoint.index, indexRouter);
-app.use(endPoint.user, loginRequired, userRouter);
+// app.use(endPoint.user, loginRequired, userRouter);
+app.use(endPoint.user, userRouter);
+app.use(endPoint.guest, guestRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
