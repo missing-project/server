@@ -83,7 +83,10 @@ class UserService {
 
     const loginUser = await this.User.findOneAndUpdate(
       { uid: user.uid },
-      { refreshToken: refreshToken },
+      {
+        refreshToken: refreshToken,
+        recentLogin: Date.now(),
+      },
       { returnOriginal: false }
     );
     return { loginUser, accessToken, refreshToken };

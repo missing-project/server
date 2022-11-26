@@ -13,8 +13,8 @@
     "strictNullChecks": false,
     "sourceMap": true,
     "paths": {
-      "*": ["./node_modules/@types/*"]
+      "*": ["./@types/*"]
     },
-    "typeRoots": ["./@types", "./node_modules/@types"]
+    "typeRoots": ["./@types/*", "./node_modules/@types"]
   }
 }
