@@ -8,10 +8,13 @@ import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
 import { errorHandler, loginRequired } from './middlewares';
-import { indexRouter, missingPersonRouter, userRouter, bookmarkRouter } from './routers';
+import {
+  indexRouter,
+  missingPersonRouter,
+  userRouter,
+  bookmarkRouter,
+} from './routers';
 import { endPoint } from './constants';
-import { api } from './utils';
-import cron from 'node-cron';
 
 const app = express();
 
@@ -41,6 +44,10 @@ app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
 });
 
-cron.schedule('0 0 12 * * *', async () => {
-  await api.getCase();
-});
+// cron.schedule('10 * * * * *', async () => {
+//   try {
+//     await api.createNewCase(1);
+//   } catch (e) {
+//     logger.error(e);
+//   }
+// });

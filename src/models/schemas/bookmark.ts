@@ -1,28 +1,18 @@
 import { Schema } from 'mongoose';
 
 export interface BookmarkInterface {
-    caseId: string;
-    createdAt: Date;
-    updatedAt: Date;
-    email: string;
+    key: string;
+    uid: string;
 }
 
 export const BookmarkSchema = new Schema<BookmarkInterface>(
   {
-    caseId: {
+    key: {
       type: Schema.Types.String,
       ref: 'case',
       required: true,
     },
-    createdAt: {
-        type: Date,
-        required: true,
-      },
-    updatedAt: {
-        type: Date,
-        required: true,
-      },
-    email: {
+    uid: {
         type: Schema.Types.String,
         ref: 'user',
         required: true

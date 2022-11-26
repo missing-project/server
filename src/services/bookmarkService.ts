@@ -10,16 +10,17 @@ class BookmarkService {
     this.Bookmark = bookmarkModel;
   }
   //북마크 가져오기
-  async findBookmark(userEmail: string) {
-    return await this.Bookmark.find({ email: userEmail });
+  async findBookmark(userId: string) {
+    return await this.Bookmark.find({ uid: userId });
   }
   //북마크 생성
   async createBookmark(bookmarkInfo: BookmarkInterface) {
     return await this.Bookmark.create(bookmarkInfo);
   }
   //북마크 하나 삭제
-  async deleteBookmark(caseId: string) {
-      return await this.Bookmark.findOneAndDelete({_id: caseId});
+  async deleteBookmark(userId: string, caseKey: string) {
+    //return await this.Bookmark.find({uid: userId}).deleteOne({key: caseKey});
+    return await this.Bookmark.findOneAndDelete({uid: userId, key: caseKey});
   }
 }
 

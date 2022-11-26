@@ -19,14 +19,15 @@ export const bookmarkController: bookmarkControllerInterface = {
     },
     
     async getBookmark(req, res) {
-        const { userEmail } = req.params;
-        const bookmarks = await bookmarkService.findBookmark(userEmail);
+        const { userId } = req.params;
+        const bookmarks = await bookmarkService.findBookmark(userId);
         res.json(bookmarks);
     },
-
+        
     async deleteOneBookmark(req, res) {
-        const { caseId } = req.params;
-        const deleteOne = await bookmarkService.deleteBookmark(caseId);
+        const caseKey = req.params.caseKey;
+        const userId = req.params.userId;
+        const deleteOne = await bookmarkService.deleteBookmark(userId, caseKey);
         res.json(deleteOne);
     },
 };
