@@ -2,33 +2,54 @@ import { caseModel, caseModelType } from '../models';
 import { CaseInterface, CaseArrayInterface } from '../models/schemas/case';
 import axios from 'axios';
 import { logger } from '../winston';
-import { openApiUri } from '../config';
-
+import { openApiUri, apiImg, apiUrl } from '../config';
+import { parseDate } from './components/utils';
 class Api {
   private Case: caseModelType;
 
   constructor(caseModel: caseModelType) {
     this.Case = caseModel;
   }
-  async createNewCase() {
-    await this.Case.deleteMany({});
-    return await this.getCase();
-  }
-  async getCase() {
+
+  async createNewCase(page: number) {
     try {
-      const { data } = await axios.get(openApiUri, {
+      await this.deleteCase();
+      await this.case(page);
+    } catch (e) {
+      logger.error(e);
+    }
+  }
+
+  async case(page: number): Promise<any> {
+    const getSize = (await this.getCaseByPage(page)).length;
+    if (getSize === 100) {
+      return await this.case(page + 1);
+    } else {
+      return;
+    }
+  }
+
+  async deleteCase() {
+    try {
+      return await this.Case.deleteMany({});
+    } catch (e) {
+      logger.error('fail deleteCase', e);
+    }
+  }
+
+  async getCaseByPage(page: number) {
+    try {
+      const uri = openApiUri + page;
+      const { data } = await axios.get(uri, {
         headers: {
           Accept: 'application/json',
         },
       });
       const cases: CaseInterface[] = data.list.map((obj: any) => {
         const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : '';
-        obj[
-          'img'
-        ] = `https://www.safe182.go.kr/api/lcm/imgView.do?msspsnIdntfccd=${num}`;
-        obj[
-          'url'
-        ] = `https://www.safe182.go.kr/home/lcm/lcmMssGet.do?gnbMenuCd=014000000000&lnbMenuCd=014001000000&rptDscd=2&msspsnIdntfccd=${num}`;
+        obj['occrDate'] = parseDate(obj.occrde);
+        obj['img'] = apiImg + num;
+        obj['url'] = apiUrl + num;
         return obj;
       });
       const newCase: CaseArrayInterface = {
@@ -48,9 +69,7 @@ class Api {
   }
 
   async createCase(data: CaseArrayInterface) {
-    const newCase = await this.Case.insertMany(data.cases);
-    logger.info(newCase);
-    return newCase;
+    return await this.Case.insertMany(data.cases);
   }
 }
 
