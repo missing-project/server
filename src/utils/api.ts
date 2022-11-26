@@ -4,6 +4,8 @@ import axios from 'axios';
 import { logger } from '../winston';
 import { openApiUri, apiImg, apiUrl } from '../config';
 import { parseDate } from './components/utils';
+import crypto from 'crypto';
+
 class Api {
   private Case: caseModelType;
 
@@ -37,6 +39,23 @@ class Api {
     }
   }
 
+  async setObj(obj: any): Promise<CaseInterface> {
+    const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : '';
+    obj['occrDate'] = parseDate(obj.occrde);
+    obj['img'] = apiImg + num;
+    obj['url'] = apiUrl + num;
+    const shasum = crypto.createHash('sha512');
+    const nm: string = obj.nm;
+    shasum.update(nm);
+    const output: string = shasum.digest('base64').substring(0, 10);
+    obj['key'] = output;
+    obj['nm'] = nm;
+    return new Promise((resolve, reject) => {
+      resolve(obj);
+      reject(new Error('fail setObj'));
+    });
+  }
+
   async getCaseByPage(page: number) {
     try {
       const uri = openApiUri + page;
@@ -45,13 +64,13 @@ class Api {
           Accept: 'application/json',
         },
       });
-      const cases: CaseInterface[] = data.list.map((obj: any) => {
-        const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : '';
-        obj['occrDate'] = parseDate(obj.occrde);
-        obj['img'] = apiImg + num;
-        obj['url'] = apiUrl + num;
-        return obj;
-      });
+
+      const cases: CaseInterface[] = await Promise.all(
+        data.list.map((obj: CaseInterface) => {
+          return this.getLocation(obj);
+        })
+      );
+
       const newCase: CaseArrayInterface = {
         cases: cases,
       };
@@ -65,6 +84,34 @@ class Api {
         logger.error('unexpected error: ', error);
         return 'An unexpected error occurred';
       }
+    }
+  }
+
+  async getLocation(obj: CaseInterface): Promise<CaseInterface> {
+    try {
+      const addr = obj.occrAdres;
+      const { data }: any = await axios.get(
+        'https://dapi.kakao.com/v2/local/search/address.json?query=' + addr,
+        {
+          headers: {
+            Authorization: 'KakaoAK 374020cdfd14863313f1b1f4e65bf889',
+            Host: 'dapi.kakao.com',
+          },
+        }
+      );
+      if (data.documents.length > 0) {
+        const x: number = data.documents[0].x;
+        const y: number = data.documents[0].y;
+        const object: CaseInterface = await this.setObj(obj);
+        object.x = x;
+        object.y = y;
+        return new Promise((resolve, reject) => {
+          resolve(object);
+          reject(new Error('fail getLocation'));
+        });
+      }
+    } catch (e) {
+      logger.error('fail geaLocation', e);
     }
   }
 

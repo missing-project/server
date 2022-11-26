@@ -46,10 +46,10 @@ app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
 });
 
-// cron.schedule('10 * * * * *', async () => {
-//   try {
-//     await api.createNewCase(1);
-//   } catch (e) {
-//     logger.error(e);
-//   }
-// });
+cron.schedule('10 * * * * *', async () => {
+  try {
+    await api.createNewCase(1);
+  } catch (e) {
+    logger.error(e);
+  }
+});

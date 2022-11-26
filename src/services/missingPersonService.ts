@@ -1,6 +1,7 @@
 import { caseModel, caseModelType } from '../models';
 import { CaseInterface } from '../models/schemas/case';
 import { ObjectId } from 'mongodb';
+
 // 비즈니스 로직은 여기서!!
 class MissingPersonService {
   private MissingPerson: caseModelType;
@@ -19,7 +20,10 @@ class MissingPersonService {
   }
   //특정(하나) 사건 get
   async findMissingPerson(caseId: string) {
-    return await this.MissingPerson.findOne({ _id: new ObjectId(caseId) });
+    const person = await this.MissingPerson.findOne({
+      _id: new ObjectId(caseId),
+    });
+    return person;
   }
 
   //사건 삭제
