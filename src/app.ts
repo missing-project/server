@@ -7,13 +7,11 @@ import Logger from 'morgan';
 import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
-import { errorHandler, loginRequired } from './middlewares';
-import {
-  indexRouter,
+import { errorHandler } from './middlewares';
+import { indexRouter,
   missingPersonRouter,
   userRouter,
-  bookmarkRouter,
-} from './routers';
+  bookmarkRouter } from './routers';
 import { endPoint } from './constants';
 import { api } from './utils';
 import cron from 'node-cron';
@@ -35,6 +33,9 @@ app.get(endPoint.index, indexRouter);
 app.use(endPoint.user, loginRequired, userRouter);
 app.use(endPoint.missingPerson, missingPersonRouter);
 app.use(endPoint.bookmark, bookmarkRouter);
+app.use(endPoint.user, userRouter);
+app.use(endPoint.guest, guestRouter);
+
 
 app.use(function (req, res, next) {
   next(createError(404));
