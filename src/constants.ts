@@ -3,6 +3,7 @@ interface EndPointInterface {
   user: string;
   missingPerson: string;
   bookmark: string;
+  guest: string;
 }
 
 export const endPoint: EndPointInterface = {
@@ -10,4 +11,5 @@ export const endPoint: EndPointInterface = {
   user: '/user',
   missingPerson: '/mp',
   bookmark: '/bookmark',
+  guest: '/guest',
 };

@@ -7,13 +7,13 @@ import Logger from 'morgan';
 import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
-import { errorHandler, loginRequired } from './middlewares';
 import {
   indexRouter,
   missingPersonRouter,
   userRouter,
   bookmarkRouter,
 } from './routers';
+import { errorHandler } from './middlewares'; //loginRequired는 추후에 다시 연결예정
 import { endPoint } from './constants';
 
 const app = express();
@@ -30,9 +30,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get(endPoint.index, indexRouter);
-app.use(endPoint.user, loginRequired, userRouter);
 app.use(endPoint.missingPerson, missingPersonRouter);
 app.use(endPoint.bookmark, bookmarkRouter);
+// app.use(endPoint.user, loginRequired, userRouter);
+app.use(endPoint.user, userRouter);
+app.use(endPoint.guest, guestRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
