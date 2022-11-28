@@ -9,7 +9,7 @@ interface EndPointInterface {
 export const endPoint: EndPointInterface = {
   index: '/',
   user: '/user',
- missingPerson: '/mp',
+  missingPerson: '/mp',
   bookmark: '/bookmark',
   guest: '/guest',
 };
