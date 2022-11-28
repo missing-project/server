@@ -17,7 +17,19 @@ if (process.env.OPEN_API === undefined) {
 
 const port = parseInt(process.env.PORT ?? '8080', 10);
 const mongoDBUri = process.env.MONGODB_URI;
-const openApiUri: string = process.env.OPEN_API;
-const apiImg: string = process.env.API_IMG;
-const apiUrl: string = process.env.API_URL;
-export { port, mongoDBUri, openApiUri, apiImg, apiUrl };
+const OPEN_API_URI: string = process.env.OPEN_API;
+const API_IMG: string = process.env.API_IMG;
+const API_URL: string = process.env.API_URL;
+const KAKAO_MAP: string = process.env.KAKAO_MAP;
+const KAKAO_AUTH: string = process.env.KAKAO_AUTH;
+const KAKAO_HOST: string = process.env.KAKAO_HOST;
+export {
+  port,
+  mongoDBUri,
+  OPEN_API_URI,
+  API_IMG,
+  API_URL,
+  KAKAO_MAP,
+  KAKAO_AUTH,
+  KAKAO_HOST,
+};
