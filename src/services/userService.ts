@@ -23,12 +23,6 @@ class UserService {
   async createUser(userInfo: UserInterface) {
     const { uid, email, password, device } = userInfo;
 
-    // 이메일 인증 부분을 authEmail에서 처리해주고 있어서 register 부분에서 제거할 것인지 토의필요!
-
-    const userEmailValidation = await this.User.findOne({ email: email });
-    if (userEmailValidation) {
-      throw new Error('이 이메일은 사용중입니다. 다른 이메일을 입력해 주세요');
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const registerInfo = {
