@@ -127,11 +127,16 @@ class UserService {
   }
 
   // 액세스 토큰 만료에 따른 재생산
-  async expandAccToken(uid: string, refreshToken: string) {
-
-    const user = await this.User.findOne({ uid });
-    if (refreshToken === user?.refreshToken) {
-      const secretKey = process.env.JWT_SECRETKEY;
+  async expandAccToken(refreshToken: string) {
+    const user = await this.User.findOne({ refreshToken });
+    if (!user) {
+      return {
+        status: 'Fail',
+        message: '해당하는 토큰에 유효한 사용자는 존재하지 않습니다',
+      };
+    }
+    if (refreshToken == user?.refreshToken) {
+      const secretKey = process.env.JWT_SECRET_KEY;
       const accessPayload = {
         uid: user.uid,
         role: user.role,
@@ -141,9 +146,16 @@ class UserService {
       const accessToken = jwt.sign(accessPayload, secretKey, {
         expiresIn: '1h',
       });
-      return accessToken;
-    }
-    return;
+      return {
+        status: 'OK',
+        message: '토큰을 새로 갱신하였습니다.',
+        accessToken,
+      };
+    } else
+      return {
+        status: 'fail',
+        message: 'Refresh 토큰이 일치하지 않습니다',
+      };
   }
 
   async expandRefToken(uid: string, refreshToken: string) {
@@ -216,8 +228,8 @@ class UserService {
         service: 'Naver',
         host: 'smtp.naver.com',
         auth: {
-          user: process.env.SMTPID,
-          pass: process.env.SMTPPW,
+          user: process.env.SMTPID, // 네이버이메일
+          pass: process.env.SMTPPW, // 네이버비밀번호
         },
         port: 465,
         tls: {
@@ -257,7 +269,6 @@ class UserService {
         message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
       };
     }
-
   }
 }
 
