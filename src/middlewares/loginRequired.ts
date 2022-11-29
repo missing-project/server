@@ -44,7 +44,10 @@ export async function loginRequired(
           return;
         }
         const uid = req.body.uid;
-        const token = await userService.expandToken(uid, <string>refreshToken);
+        const token = await userService.expandAccToken(
+          uid,
+          <string>refreshToken
+        );
         return {
           result: false,
           reason: 'expired token',

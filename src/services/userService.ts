@@ -73,7 +73,7 @@ class UserService {
       role: user.role,
       device: user.device,
     };
-    const refreshPayload = { device: user.role };
+    const refreshPayload = {};
 
     const accessToken = jwt.sign(accessPayload, secretKey, { expiresIn: '1h' });
     const refreshToken = jwt.sign(refreshPayload, secretKey, {
@@ -124,7 +124,7 @@ class UserService {
   }
 
   // 액세스 토큰 만료에 따른 재생산
-  async expandToken(uid: string, refreshToken: string) {
+  async expandAccToken(uid: string, refreshToken: string) {
     const user = await this.User.findOne({ uid });
     if (refreshToken === user?.refreshToken) {
       const secretKey = process.env.JWT_SECRETKEY;
@@ -133,11 +133,34 @@ class UserService {
         role: user.role,
         device: user.role,
       };
-
       const accessToken = jwt.sign(accessPayload, secretKey, {
         expiresIn: '1h',
       });
       return accessToken;
+    }
+    return;
+  }
+
+  async expandRefToken(uid: string, refreshToken: string) {
+    const user = await this.User.findOne({ uid });
+    if (refreshToken === user?.refreshToken) {
+      const secretKey = process.env.JWT_SECRETKEY;
+      const refreshPayload = {};
+      const newToken = jwt.sign(refreshPayload, secretKey, {
+        expiresIn: '14D',
+      });
+      try {
+        await this.User.findOneAndUpdate(
+          { uid: user.uid },
+          {
+            refreshToken: newToken,
+          },
+          { returnOriginal: false }
+        );
+      } catch (err) {
+        throw new Error(' DB에 갱신한 토큰을 저장하는데 실패했습니다.');
+      }
+      return newToken;
     }
     return;
   }
@@ -177,6 +200,58 @@ class UserService {
 
     const result = await smtpTransport.sendMail(mailOptions);
     return result;
+  }
+  async resetPassword(uid: string, email: string) {
+    const user = await this.User.findOne({ uid: uid, email: email });
+    if (!user) {
+      throw new Error('입력하신 정보의 계정은 존재하지 않습니다');
+    } else {
+      const authNum = Math.random().toString(36).substring(2, 11);
+      const smtpTransport = nodemailer.createTransport({
+        service: 'Naver',
+        host: 'smtp.naver.com',
+        auth: {
+          user: process.env.SMTPID,
+          pass: process.env.SMTPPW,
+        },
+        port: 465,
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+
+      const mailOptions = {
+        from: `missing<${process.env.SMTPID}>`,
+        to: email,
+        subject: '[Missing] 비밀번호 초기화 안내 ',
+        text:
+          '요청하신대로 비밀번호를 초기화 하였습니다. 다음의 문자를 입력하셔서 로그인 하신 후 비밀번호를 변경해주시기 바랍니다 : ' +
+          authNum,
+      };
+
+      try {
+        await smtpTransport.sendMail(mailOptions);
+      } catch (err) {
+        throw new Error('비밀번호 초기화 메일전송에 실패하였습니다');
+      }
+
+      try {
+        const password = await bcrypt.hash(authNum, 10);
+        await this.User.findOneAndUpdate(
+          { uid: user.uid },
+          {
+            password,
+          },
+          { returnOriginal: false }
+        );
+      } catch (err) {
+        throw new Error('비밀번호 초기화 및 인증메일 전송에 실패하였습니다.');
+      }
+      return {
+        status: 'OK',
+        message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
+      };
+    }
   }
 }
 

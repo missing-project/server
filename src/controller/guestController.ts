@@ -7,6 +7,7 @@ interface guestControllerInterface {
   loginUser: AsyncRequestHandler;
   registerUser: AsyncRequestHandler;
   authEmail: AsyncRequestHandler;
+  resetPW: AsyncRequestHandler;
 }
 
 /* 
@@ -31,6 +32,14 @@ export const guestController: guestControllerInterface = {
   // 회원가입 간 이메일 인증 과정
   async authEmail(req, res) {
     const result = await userService.authEmail(req.body.email);
+    res.json(result);
+  },
+
+  async resetPW(req, res) {
+    const result = await userService.resetPassword(
+      req.body.uid,
+      req.body.email
+    );
     res.json(result);
   },
 };
