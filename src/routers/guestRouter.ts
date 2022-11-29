@@ -8,6 +8,7 @@ guestRouter.get('/home', (req, res) => {
 });
 guestRouter.get('/', asyncHandler(guestController.loginUser));
 guestRouter.post('/', asyncHandler(guestController.registerUser));
+guestRouter.post('/authmail', asyncHandler(guestController.authEmail));
 /*
 회원가입 관련 필요 데이터
 uid, email, password, name, device, role, active

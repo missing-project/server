@@ -6,6 +6,7 @@ import { AsyncRequestHandler } from '../types';
 interface guestControllerInterface {
   loginUser: AsyncRequestHandler;
   registerUser: AsyncRequestHandler;
+  authEmail: AsyncRequestHandler;
 }
 
 /* 
@@ -25,5 +26,11 @@ export const guestController: guestControllerInterface = {
   async registerUser(req, res) {
     const user = await userService.createUser(req.body);
     res.json({ user });
+  },
+
+  // 회원가입 간 이메일 인증 과정
+  async authEmail(req, res) {
+    const result = await userService.authEmail(req.body.email);
+    res.json(result);
   },
 };

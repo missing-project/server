@@ -3,7 +3,7 @@ import { UserInterface, LoginInterface } from '../models/schemas/user';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
+import nodemailer from 'nodemailer';
 dotenv.config();
 
 // 비즈니스 로직은 여기서!!
@@ -16,12 +16,13 @@ class UserService {
   }
 
   async findUser(uid: string) {
-    return await this.User.find({ uid });
+    return await this.User.findOne({ uid });
   }
 
   async createUser(userInfo: UserInterface) {
     const { uid, email, password, device } = userInfo;
 
+    // 이메일 인증 부분을 authEmail에서 처리해주고 있어서 register 부분에서 제거할 것인지 토의필요!
     const userEmailValidation = await this.User.findOne({ email: email });
     if (userEmailValidation) {
       throw new Error('이 이메일은 사용중입니다. 다른 이메일을 입력해 주세요');
@@ -139,6 +140,43 @@ class UserService {
       return accessToken;
     }
     return;
+  }
+
+  async authEmail(email: string) {
+    const userEmailValidation = await this.User.findOne({ email: email });
+    if (userEmailValidation) {
+      throw new Error('이 이메일은 사용중입니다. 다른 이메일을 입력해 주세요');
+    }
+
+    const smtpTransport = nodemailer.createTransport({
+      service: 'Naver',
+      host: 'smtp.naver.com',
+      auth: {
+        user: process.env.SMTPID,
+        pass: process.env.SMTPPW,
+      },
+      port: 465,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+    const generateRandom = (min: number, max: number) => {
+      const ranNum = Math.floor(Math.random() * (max - min + 1)) + min;
+      return ranNum;
+    };
+
+    const number = generateRandom(111111, 999999);
+    const mailOptions = {
+      from: `missing<${process.env.SMTPID}>`,
+      to: email,
+      subject: '[Missing]이메일 인증 요청',
+      text:
+        '다음 숫자 6자리를 이메인 인증 칸란에 기입해주시기 바랍니다. : ' +
+        number,
+    };
+
+    const result = await smtpTransport.sendMail(mailOptions);
+    return result;
   }
 }
 
