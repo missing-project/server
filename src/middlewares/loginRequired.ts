@@ -48,6 +48,7 @@ export async function loginRequired(
           uid,
           <string>refreshToken
         );
+
         return {
           result: false,
           reason: 'expired token',

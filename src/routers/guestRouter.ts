@@ -6,6 +6,7 @@ export const guestRouter = Router();
 guestRouter.get('/home', (req, res) => {
   res.send('hello Guest!');
 });
+
 guestRouter.post('/login', asyncHandler(guestController.loginUser));
 guestRouter.post('/register', asyncHandler(guestController.registerUser));
 guestRouter.post('/authmail', asyncHandler(guestController.authEmail));

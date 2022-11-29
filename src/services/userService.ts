@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+
 dotenv.config();
 
 // 비즈니스 로직은 여기서!!
@@ -23,6 +24,7 @@ class UserService {
     const { uid, email, password, device } = userInfo;
 
     // 이메일 인증 부분을 authEmail에서 처리해주고 있어서 register 부분에서 제거할 것인지 토의필요!
+
     const userEmailValidation = await this.User.findOne({ email: email });
     if (userEmailValidation) {
       throw new Error('이 이메일은 사용중입니다. 다른 이메일을 입력해 주세요');
@@ -88,6 +90,7 @@ class UserService {
         refreshToken: refreshToken,
         recentLogin: Date.now(),
       },
+
       { returnOriginal: false }
     );
     return { loginUser, accessToken, refreshToken };
@@ -125,6 +128,7 @@ class UserService {
 
   // 액세스 토큰 만료에 따른 재생산
   async expandAccToken(uid: string, refreshToken: string) {
+
     const user = await this.User.findOne({ uid });
     if (refreshToken === user?.refreshToken) {
       const secretKey = process.env.JWT_SECRETKEY;
@@ -133,6 +137,7 @@ class UserService {
         role: user.role,
         device: user.role,
       };
+
       const accessToken = jwt.sign(accessPayload, secretKey, {
         expiresIn: '1h',
       });
@@ -252,6 +257,7 @@ class UserService {
         message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
       };
     }
+
   }
 }
 

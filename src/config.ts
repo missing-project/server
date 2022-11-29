@@ -18,4 +18,6 @@ if (process.env.OPEN_API === undefined) {
 const port = parseInt(process.env.PORT ?? '8080', 10);
 const mongoDBUri = process.env.MONGODB_URI;
 const openApiUri: string = process.env.OPEN_API;
-export { port, mongoDBUri, openApiUri };
+const apiImg: string = process.env.API_IMG;
+const apiUrl: string = process.env.API_URL;
+export { port, mongoDBUri, openApiUri, apiImg, apiUrl };

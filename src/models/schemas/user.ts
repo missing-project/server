@@ -30,6 +30,7 @@ export const UserSchema = new Schema<UserInterface>(
       type: String,
       required: true,
     },
+
     refreshToken: {
       type: String,
       required: false,

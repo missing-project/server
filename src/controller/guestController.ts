@@ -42,4 +42,5 @@ export const guestController: guestControllerInterface = {
     );
     res.json(result);
   },
+
 };
