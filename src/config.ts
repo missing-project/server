@@ -23,6 +23,7 @@ const API_URL: string = process.env.API_URL;
 const KAKAO_MAP: string = process.env.KAKAO_MAP;
 const KAKAO_AUTH: string = process.env.KAKAO_AUTH;
 const KAKAO_HOST: string = process.env.KAKAO_HOST;
+const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY;
 export {
   port,
   mongoDBUri,
@@ -32,4 +33,5 @@ export {
   KAKAO_MAP,
   KAKAO_AUTH,
   KAKAO_HOST,
+  JWT_SECRET_KEY,
 };
