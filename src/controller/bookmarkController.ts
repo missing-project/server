@@ -32,8 +32,13 @@ export const bookmarkController: bookmarkControllerInterface = {
   },
 
   async deleteOneBookmark(req, res) {
-    const { caseId } = req.params;
-    const deleteOne = await bookmarkService.deleteBookmark(caseId);
+    const { key } = req.body;
+    const { uid } = req.body;
+    const info: BookmarkInterface = {
+      key,
+      uid,
+    };
+    const deleteOne = await bookmarkService.deleteBookmark(info);
     res.json(deleteOne);
   },
 };

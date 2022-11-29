@@ -36,8 +36,8 @@ class BookmarkService {
     return await userService.getUserInfo(uid);
   }
   //북마크 하나 삭제
-  async deleteBookmark(caseId: string) {
-    return await this.Bookmark.findOneAndDelete({ _id: caseId });
+  async deleteBookmark(info: BookmarkInterface) {
+    return await this.Bookmark.findOneAndDelete(info);
   }
 }
 

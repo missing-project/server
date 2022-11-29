@@ -16,6 +16,7 @@ bookmarkRouter.post(
   asyncHandler(bookmarkController.postBookmark)
 );
 bookmarkRouter.delete(
-  '/:key',
+  '/',
+  loginRequired,
   asyncHandler(bookmarkController.deleteOneBookmark)
 );
