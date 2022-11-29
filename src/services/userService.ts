@@ -263,7 +263,7 @@ class UserService {
         message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
       };
     }
-
+  }
   async getUserInfo(uid: string) {
     const user = await this.User.findOne({ uid });
     return user;
