@@ -30,11 +30,15 @@ class Api {
   }
 
   async case(page: number): Promise<any> {
-    const getSize = (await this.getCaseByPage(page)).length;
-    if (getSize === 100) {
-      return await this.case(page + 1);
-    } else {
-      return;
+    try {
+      const getSize = (await this.getCaseByPage(page)).length;
+      if (getSize === 100) {
+        return await this.case(page + 1);
+      } else {
+        return;
+      }
+    } catch (e) {
+      logger.error(e);
     }
   }
 

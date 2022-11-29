@@ -7,7 +7,7 @@ import Logger from 'morgan';
 import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
-import { errorHandler } from './middlewares';
+import { errorHandler, loginRequired } from './middlewares';
 import {
   indexRouter,
   missingPersonRouter,
@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get(endPoint.index, indexRouter);
-app.use(endPoint.user, userRouter);
+app.use(endPoint.user, loginRequired, userRouter);
 app.use(endPoint.missingPerson, missingPersonRouter);
 app.use(endPoint.bookmark, bookmarkRouter);
 app.use(endPoint.user, userRouter);

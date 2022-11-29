@@ -26,6 +26,10 @@ class MissingPersonService {
     return person;
   }
 
+  async getCaseBykey(key: string) {
+    return await this.MissingPerson.findOne({ key });
+  }
+
   //사건 삭제
   async deleteMissingPerson(caseId: string) {
     return await this.MissingPerson.findOneAndDelete({

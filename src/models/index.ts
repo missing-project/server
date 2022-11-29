@@ -17,7 +17,10 @@ export const modelIdentifier: ModelIdentifierInterface = {
 
 const userModel = model<UserInterface>(modelIdentifier.user, UserSchema);
 const caseModel = model<CaseInterface>(modelIdentifier.case, CaseSchema);
-const bookmarkModel = model<BookmarkInterface>(modelIdentifier.bookmark, BookmarkSchema);
+const bookmarkModel = model<BookmarkInterface>(
+  modelIdentifier.bookmark,
+  BookmarkSchema
+);
 // const caseModel = model<CaseInterface>(modelIdentifier.case, CaseSchema);
 
 type userModelType = Model<UserInterface>;
@@ -25,10 +28,10 @@ type caseModelType = Model<CaseInterface>;
 type bookmarkModelType = Model<BookmarkInterface>;
 
 // 이런 식으로 아래로 붙여주시고 아래 export 추가해주세요
-export { 
-  userModel, 
-  userModelType, 
-  caseModel, 
+export {
+  userModel,
+  userModelType,
+  caseModel,
   caseModelType,
   bookmarkModel,
   bookmarkModelType,
