@@ -1,7 +1,8 @@
 import { Schema } from 'mongoose';
 
 export interface CaseInterface {
-  nm: string;
+  key?: string;
+  nm?: string;
   age?: number;
   ageNow?: number;
   occrDate?: Date;
@@ -11,15 +12,19 @@ export interface CaseInterface {
   occrAdres?: string;
   img?: string;
   url?: string;
+  x?: number;
+  y?: number;
 }
 export interface CaseArrayInterface {
   cases: CaseInterface[];
 }
 export const CaseSchema = new Schema<CaseInterface>(
   {
+    key: {
+      type: String,
+    },
     nm: {
       type: String,
-      required: true,
     },
     age: {
       type: Number,
@@ -50,9 +55,16 @@ export const CaseSchema = new Schema<CaseInterface>(
     url: {
       type: String,
     },
+    x: {
+      type: Number,
+    },
+    y: {
+      type: Number,
+    },
   },
   {
     timestamps: true,
+    collection: 'case',
   }
 );
 // todo sexdstnDscd, writngTrgetDscd enum
