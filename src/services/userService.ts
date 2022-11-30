@@ -138,11 +138,6 @@ class UserService {
     }
     return;
   }
-
-  async getUserInfo(uid: string) {
-    const user = await this.User.findOne({ uid });
-    return user;
-  }
 }
 
 const userService = new UserService(userModel);
