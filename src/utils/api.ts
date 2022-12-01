@@ -75,6 +75,7 @@ class Api {
   async getCaseByPage(page: number) {
     try {
       const uri = OPEN_API_URI + page;
+
       const { data } = await axios.get(uri, {
         headers: {
           Accept: 'application/json',

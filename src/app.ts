@@ -49,10 +49,18 @@ app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
 });
 
-cron.schedule('0 11 * * *', async () => {
-  try {
-    await api.createNewCase(1);
-  } catch (e) {
-    logger.error(e);
+cron.schedule(
+  '0 0 15 * * *',
+  async () => {
+    try {
+      logger.info('스케줄러 실행');
+      await api.createNewCase(1);
+    } catch (e) {
+      logger.error(e);
+    }
+  },
+  {
+    scheduled: true,
+    timezone: 'Asia/Seoul',
   }
-});
+);
