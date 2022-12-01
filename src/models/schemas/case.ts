@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 
 export interface CaseInterface {
-  key?: string;
+  _id?: string;
   nm?: string;
   age?: number;
   ageNow?: number;
@@ -20,7 +20,7 @@ export interface CaseArrayInterface {
 }
 export const CaseSchema = new Schema<CaseInterface>(
   {
-    key: {
+    _id: {
       type: String,
     },
     nm: {

@@ -12,13 +12,7 @@ class BookmarkService {
   }
   //북마크 가져오기
   async findBookmark(uid: string) {
-    const bookmarkCase = await this.Bookmark.find({ uid }, { key: 1, _id: 0 });
-
-    return await Promise.all(
-      bookmarkCase.map((e) => {
-        return this.getCase(e.key);
-      })
-    );
+    return await this.Bookmark.find({ uid }).populate('key');
   }
 
   private async isBookmarked(

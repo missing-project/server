@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { errorResponse } from '../utils';
 import { userService } from '../services/userService';
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
-dotenv.config({ path: '../../.env' });
 export async function loginRequired(
   req: Request,
   res: Response,
@@ -12,9 +10,9 @@ export async function loginRequired(
 ) {
   // 토큰 타입 acc, ref로 토큰 분류
   const tokenType = req.headers.authorization?.split(' ')[0]; // acc || ref
-  const Token = req.headers.authorization?.split(' ')[1];
+  const token = req.headers.authorization?.split(' ')[1];
 
-  if (!Token || Token === 'null') {
+  if (!token || token === 'null') {
     errorResponse(
       res,
       'FORBIDDEN',
@@ -22,20 +20,18 @@ export async function loginRequired(
     );
   }
 
-  if (!(tokenType === 'acc' || tokenType === 'ref')) {
+  if (!(tokenType === 'access' || tokenType === 'refresh')) {
     errorResponse(res, 'FORBIDDEN', '정상적인 토큰이 아닙니다');
   }
 
-  if (tokenType == 'acc') {
+  if (tokenType == 'access') {
     try {
       const secretKey = process.env.JWT_SECRET_KEY;
-      const jwtDecoded = jwt.verify(Token, secretKey);
+      const jwtDecoded = jwt.verify(token, secretKey);
       const uid = (<{ uid: string }>jwtDecoded).uid;
       const role = (<{ role: string }>jwtDecoded).role;
-      const device = (<{ device: string }>jwtDecoded).device;
       req.body.uid = uid;
       req.body.role = role;
-      req.body.device = device;
       next();
     } catch (error) {
       // error type일 경우에만 에러처리
@@ -51,9 +47,9 @@ export async function loginRequired(
         errorResponse(res, 'BADREQUEST', 'abnomal Error : Non Error Type');
       }
     }
-  } else if (tokenType === 'ref') {
+  } else if (tokenType === 'refresh') {
     // refresh 토큰 -> 갱신
-    const result = await userService.expandAccToken(<string>Token);
+    const result = await userService.expandAccToken(<string>token);
     res.json(result);
   }
 }

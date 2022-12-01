@@ -54,13 +54,13 @@ class Api {
     const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : '';
     const shasum = crypto.createHash('sha512');
     const nm: string = obj.nm;
-    shasum.update(nm);
-    const output: string = shasum.digest('base64').substring(0, 10);
+    shasum.update(`${nm}${num}`);
+    const output: string = shasum.digest('base64').substring(0, 50);
     const { x, y }: CaseInterface = await this.getLocation(obj);
 
     obj.occrDate = parseDate(obj.occrde);
     obj.nm = nm;
-    obj.key = output;
+    obj._id = output;
     obj.img = API_IMG + num;
     obj.url = API_URL + num;
     obj.x = x;
