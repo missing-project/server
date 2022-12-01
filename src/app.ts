@@ -49,7 +49,7 @@ app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
 });
 
-cron.schedule('0 0 03 * * *', async () => {
+cron.schedule('0 11 * * *', async () => {
   try {
     await api.createNewCase(1);
   } catch (e) {
