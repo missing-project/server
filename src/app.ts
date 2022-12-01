@@ -50,7 +50,7 @@ app.listen(port, () => {
 });
 
 cron.schedule(
-  '0 0 15 * * *',
+  '0 0 3 * * *',
   async () => {
     try {
       logger.info('스케줄러 실행');
