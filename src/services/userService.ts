@@ -21,7 +21,7 @@ class UserService {
   }
 
   async createUser(userInfo: UserInterface) {
-    const { uid, email, password, device } = userInfo;
+    const { uid, email, password } = userInfo;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -29,7 +29,6 @@ class UserService {
       uid,
       email,
       password: hashedPassword,
-      device,
       role: 'user',
       active: true,
     };
@@ -67,7 +66,6 @@ class UserService {
     const accessPayload = {
       uid: user.uid,
       role: user.role,
-      device: user.device,
     };
     const refreshPayload = {};
 
@@ -84,7 +82,6 @@ class UserService {
         refreshToken: refreshToken,
         recentLogin: Date.now(),
       },
-
       { returnOriginal: false }
     );
     return { loginUser, accessToken, refreshToken };
@@ -210,7 +207,7 @@ class UserService {
     };
 
     const result = await smtpTransport.sendMail(mailOptions);
-    return result;
+    return { result, code: number };
   }
   async resetPassword(uid: string, email: string) {
     const user = await this.User.findOne({ uid: uid, email: email });

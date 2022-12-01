@@ -8,6 +8,7 @@ interface guestControllerInterface {
   registerUser: AsyncRequestHandler;
   authEmail: AsyncRequestHandler;
   resetPW: AsyncRequestHandler;
+  checkId: AsyncRequestHandler;
 }
 
 /* 
@@ -21,7 +22,7 @@ export const guestController: guestControllerInterface = {
     const uid = req.body.uid;
     const password = req.body.password;
     const user = await userService.loginUser({ uid, password });
-    res.json({ user });
+    res.json(user);
   },
 
   async registerUser(req, res) {
@@ -43,4 +44,9 @@ export const guestController: guestControllerInterface = {
     res.json(result);
   },
 
+  async checkId(req, res) {
+    const { id } = req.body;
+    const user = await userService.findUser(id);
+    res.json({ isUsable: Boolean(!user?.uid) });
+  },
 };

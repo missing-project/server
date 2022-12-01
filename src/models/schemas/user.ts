@@ -10,7 +10,6 @@ export interface UserInterface {
   email: string;
   password: string;
   refreshToken?: string;
-  device: string;
   role: string;
   active: boolean;
   recentLogin?: Date;
@@ -35,10 +34,6 @@ export const UserSchema = new Schema<UserInterface>(
       type: String,
       required: false,
     },
-    device: {
-      type: String,
-      required: true,
-    },
     role: {
       type: String,
       required: true,
@@ -55,5 +50,5 @@ export const UserSchema = new Schema<UserInterface>(
   {
     timestamps: true,
     collection: 'user',
-  },
+  }
 );
