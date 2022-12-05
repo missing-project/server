@@ -1,7 +1,7 @@
 interface EndPointInterface {
   index: string;
   user: string;
-  missingPerson: string;
+  case: string;
   bookmark: string;
   guest: string;
 }
@@ -9,7 +9,7 @@ interface EndPointInterface {
 export const endPoint: EndPointInterface = {
   index: '/',
   user: '/user',
-  missingPerson: '/mp',
+  case: '/case',
   bookmark: '/bookmark',
   guest: '/guest',
 };

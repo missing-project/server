@@ -10,7 +10,7 @@ import { port, mongoDBUri } from './config';
 import { errorHandler, loginRequired } from './middlewares';
 import {
   indexRouter,
-  missingPersonRouter,
+  caseRouter,
   userRouter,
   bookmarkRouter,
   guestRouter,
@@ -34,7 +34,7 @@ app.use(cookieParser());
 
 app.get(endPoint.index, indexRouter);
 app.use(endPoint.guest, guestRouter);
-app.use(endPoint.missingPerson, missingPersonRouter);
+app.use(endPoint.case, caseRouter);
 app.use(endPoint.user, loginRequired, userRouter);
 app.use(endPoint.bookmark, loginRequired, bookmarkRouter);
 
