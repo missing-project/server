@@ -52,7 +52,10 @@ cron.schedule(
   '0 0 3 * * *',
   async () => {
     try {
-      await api.createNewCase(1);
+      logger.info(`scheduler start on time: ${new Date()}`);
+      await api.createNewCase(1).then(() => {
+        logger.info(`scheduler success on time: ${new Date()}`);
+      });
     } catch (e) {
       logger.error(e);
     }
