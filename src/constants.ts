@@ -8,8 +8,8 @@ interface EndPointInterface {
 
 export const endPoint: EndPointInterface = {
   index: '/',
+  guest: '/guest',
   user: '/user',
   case: '/case',
   bookmark: '/bookmark',
-  guest: '/guest',
 };

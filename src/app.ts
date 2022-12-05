@@ -16,7 +16,7 @@ import {
   guestRouter,
 } from './routers';
 import { endPoint } from './constants';
-import { api } from './utils';
+import { scheduler } from './utils';
 import cron from 'node-cron';
 
 const app = express();
@@ -53,7 +53,7 @@ cron.schedule(
   async () => {
     try {
       logger.info(`scheduler start on time: ${new Date()}`);
-      await api.createNewCase(1).then(() => {
+      await scheduler.createNewCase().then(() => {
         logger.info(`scheduler success on time: ${new Date()}`);
       });
     } catch (e) {

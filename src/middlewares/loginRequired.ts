@@ -6,15 +6,15 @@ export async function loginRequired(
   res: Response,
   next: NextFunction
 ) {
-  // 토큰 타입 acc, ref로 토큰 분류
-  const tokenType = req.headers.authorization?.split(' ')[0]; // access || refresh
+  // 토큰 타입 access || refresh
+  const tokenType = req.headers.authorization?.split(' ')[0];
   const token = req.headers.authorization?.split(' ')[1];
 
   if (!token || token === 'null') {
     next(new Error('로그인한 유저만 사용할 수 있는 서비스입니다.'));
   }
 
-  if (!(tokenType === 'access')) {
+  if (!(tokenType === 'access' || tokenType === 'refresh')) {
     next(new Error('정상적인 토큰이 아닙니다'));
   }
 
@@ -27,11 +27,6 @@ export async function loginRequired(
     req.body.role = role;
     next();
   } catch (error) {
-    // error type일 경우에만 에러처리
-    if (error instanceof Error && error.message === 'jwt expired') {
-      next(new Error('request RefreshToken for assigning Token'));
-    } else {
-      next(error);
-    }
+    next(error);
   }
 }
