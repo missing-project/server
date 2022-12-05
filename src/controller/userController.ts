@@ -8,12 +8,8 @@ interface userControllerInterface {
   updateUser: AsyncRequestHandler;
   activeUser: AsyncRequestHandler;
   inactiveUser: AsyncRequestHandler;
+  tokenRefresh: AsyncRequestHandler;
 }
-
-/* 
-컨트롤러에서는 비즈니스로직을 작성하지 마시오!
-req, res 활용하여 client와의 상호작용만을 다루는 레이어 입니다.
-*/
 
 export const userController: userControllerInterface = {
   async getUser(req, res) {
@@ -22,7 +18,6 @@ export const userController: userControllerInterface = {
     res.json({ users });
   },
 
-  /* postUser는 현재 회원가입시에만 사용 */
   async postUser(req, res) {
     const user = await userService.createUser(req.body);
     res.json({ user });
@@ -49,5 +44,11 @@ export const userController: userControllerInterface = {
     const uid = req.body.uid;
     const user = await userService.activeUser(uid);
     res.json({ user });
+  },
+
+  async tokenRefresh(req, res, _, isLogin: boolean) {
+    const token = req.headers.authorization?.split(' ')[1];
+    const refreshed = await userService.expandAccToken(token, isLogin);
+    res.json(refreshed);
   },
 };

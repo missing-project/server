@@ -1,24 +1,30 @@
 import { Router } from 'express';
 import { userController } from '../controller';
 import { asyncHandler } from '../utils';
-import { loginRequired } from '../middlewares';
+
 export const userRouter = Router();
 
 //유저정보 확인
-userRouter.get('/', loginRequired, asyncHandler(userController.getUser));
+userRouter.get('/', asyncHandler(userController.getUser));
 //유저정보 수정
-userRouter.patch('/', loginRequired, asyncHandler(userController.updateUser));
+userRouter.patch('/', asyncHandler(userController.updateUser));
 //탈퇴
-userRouter.delete('/', loginRequired, asyncHandler(userController.deleteUser));
+userRouter.delete('/', asyncHandler(userController.deleteUser));
 //계정 활성화
-userRouter.patch(
-  '/active/',
-  loginRequired,
-  asyncHandler(userController.activeUser)
-);
+userRouter.patch('/active/', asyncHandler(userController.activeUser));
 //계정 비활성화
-userRouter.patch(
-  '/inactive/',
-  loginRequired,
-  asyncHandler(userController.inactiveUser)
+userRouter.patch('/inactive/', asyncHandler(userController.inactiveUser));
+
+userRouter.get(
+  '/remember',
+  asyncHandler(async (req, res, next) => {
+    await userController.tokenRefresh(req, res, next, true);
+  })
+);
+
+userRouter.get(
+  '/refresh',
+  asyncHandler(async (req, res, next) => {
+    await userController.tokenRefresh(req, res, next, false);
+  })
 );

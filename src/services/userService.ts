@@ -4,12 +4,36 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
+import differenceInDays from 'date-fns/differenceInDays';
 
 dotenv.config();
 
 // 비즈니스 로직은 여기서!!
 class UserService {
   private User: userModelType;
+
+  private tokenCreate = (
+    isAccess: boolean,
+    uid: string,
+    role: string
+  ): string => {
+    const secretKey = process.env.JWT_SECRET_KEY;
+    return jwt.sign(
+      isAccess ? { uid, role } : { uid, role, date: new Date() },
+      secretKey,
+      {
+        expiresIn: isAccess ? '1h' : '14D',
+      }
+    );
+  };
+
+  private refreshExpireCheck = (token: string): boolean => {
+    const secretKey = process.env.JWT_SECRET_KEY;
+    const refreshDecoded = jwt.verify(token, secretKey);
+    const date = (<{ date: string }>refreshDecoded).date;
+    const diff = differenceInDays(new Date(), new Date(date));
+    return diff < 4;
+  };
 
   // 의존성 주입
   constructor(userModel: userModelType) {
@@ -61,21 +85,11 @@ class UserService {
       throw new Error('비밀번호가 일치하지 않습니다. 다시 한 번 확인해 주세요');
     }
 
-    // 토큰 생성
-    const secretKey = process.env.JWT_SECRET_KEY;
-    const accessPayload = {
-      uid: user.uid,
-      role: user.role,
-    };
-    const refreshPayload = {};
-
-    const accessToken = jwt.sign(accessPayload, secretKey, { expiresIn: '1h' });
-    const refreshToken = jwt.sign(refreshPayload, secretKey, {
-      expiresIn: '14d',
-    });
+    const { role } = user;
+    const accessToken = this.tokenCreate(true, uid, role);
+    const refreshToken = this.tokenCreate(false, uid, role);
 
     //DB에 refresh token 저장
-
     const loginUser = await this.User.findOneAndUpdate(
       { uid: user.uid },
       {
@@ -84,7 +98,7 @@ class UserService {
       },
       { returnOriginal: false }
     );
-    return { loginUser, accessToken, refreshToken };
+    return { user: loginUser, accessToken, refreshToken };
   }
 
   // 계정 로그아웃
@@ -117,50 +131,31 @@ class UserService {
     return await this.User.deleteOne({});
   }
 
-  // 액세스 토큰 만료에 따른 재생산
-  async expandAccToken(refreshToken: string) {
-    const user = await this.User.findOne({ refreshToken });
+  // 엑세스 토큰 재발급
+  async expandAccToken(_refreshToken: string, isLogin: boolean) {
+    const user = await this.User.findOne({ refreshToken: _refreshToken });
     if (!user) {
       throw new Error('해당하는 토큰에 유효한 사용자는 존재하지 않습니다');
     }
-    if (refreshToken == user?.refreshToken) {
-      const secretKey = process.env.JWT_SECRET_KEY;
-      const accessPayload = {
-        uid: user.uid,
-        role: user.role,
-        device: user.role,
-      };
 
-      const accessToken = jwt.sign(accessPayload, secretKey, {
-        expiresIn: '1h',
-      });
-
-      return { accessToken };
-    } else {
-      throw new Error('토큰이 일치하지 않습니다');
-    }
-  }
-
-  async expandRefToken(uid: string, refreshToken: string) {
-    const user = await this.User.findOne({ uid });
-    if (refreshToken === user?.refreshToken) {
-      const secretKey = process.env.JWT_SECRETKEY;
-      const refreshPayload = {};
-      const newToken = jwt.sign(refreshPayload, secretKey, {
-        expiresIn: '14D',
-      });
-
-      await this.User.findOneAndUpdate(
-        { uid: user.uid },
-        {
-          refreshToken: newToken,
-        },
-        { returnOriginal: false }
+    if (_refreshToken !== user?.refreshToken) {
+      throw new Error(
+        'DB에 저장된 토큰과 일치하지 않습니다. 다시 로그인 해주세요'
       );
-      return newToken;
-    } else {
-      throw new Error('토큰이 일치하지 않습니다');
     }
+    const { uid, role } = user;
+    const accessToken = this.tokenCreate(true, uid, role);
+    let refreshToken = _refreshToken;
+
+    if (this.refreshExpireCheck(_refreshToken)) {
+      refreshToken = this.tokenCreate(false, uid, role);
+      await this.User.findOneAndUpdate(
+        { uid },
+        isLogin ? { refreshToken, recentLogin: Date.now() } : { refreshToken }
+      );
+    }
+
+    return { user, accessToken, refreshToken };
   }
 
   async authEmail(email: string) {
@@ -181,12 +176,12 @@ class UserService {
         rejectUnauthorized: false,
       },
     });
-    const generateRandom = (min: number, max: number) => {
+    const generateRandom = (min: number = 111111, max: number = 999999) => {
       const ranNum = Math.floor(Math.random() * (max - min + 1)) + min;
       return ranNum;
     };
 
-    const number = generateRandom(111111, 999999);
+    const number = generateRandom();
     const mailOptions = {
       from: `missing<${process.env.SMTPID}>`,
       to: email,
@@ -251,10 +246,6 @@ class UserService {
         message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
       };
     }
-  }
-  async getUserInfo(uid: string) {
-    const user = await this.User.findOne({ uid });
-    return user;
   }
 }
 

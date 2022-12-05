@@ -13,27 +13,27 @@ import {
 import { parseDate } from './components/utils';
 import crypto from 'crypto';
 
-class Api {
+class Scheduler {
   private Case: caseModelType;
 
   constructor(caseModel: caseModelType) {
     this.Case = caseModel;
   }
 
-  async createNewCase(page: number) {
+  async createNewCase() {
     try {
       await this.deleteCase();
-      await this.case(page);
+      await this.caselist();
     } catch (e) {
       logger.error(e);
     }
   }
 
-  async case(page: number): Promise<any> {
+  async caselist(page: number = 1): Promise<any> {
     try {
       const getSize = (await this.getCaseByPage(page)).length;
       if (getSize === 100) {
-        return await this.case(page + 1);
+        return await this.caselist(page + 1);
       } else {
         return;
       }
@@ -133,6 +133,6 @@ class Api {
   }
 }
 
-const api = new Api(caseModel);
+const scheduler = new Scheduler(caseModel);
 
-export { api };
+export { scheduler };
