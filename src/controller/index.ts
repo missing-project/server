@@ -1,5 +1,4 @@
 export * from './userController';
-export * from './missingPersonController';
+export * from './caseController';
 export * from './bookmarkController';
 export * from './guestController';
-
