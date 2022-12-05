@@ -121,10 +121,7 @@ class UserService {
   async expandAccToken(refreshToken: string) {
     const user = await this.User.findOne({ refreshToken });
     if (!user) {
-      return {
-        status: 'Fail',
-        message: '해당하는 토큰에 유효한 사용자는 존재하지 않습니다',
-      };
+      throw new Error('해당하는 토큰에 유효한 사용자는 존재하지 않습니다');
     }
     if (refreshToken == user?.refreshToken) {
       const secretKey = process.env.JWT_SECRET_KEY;
@@ -137,16 +134,11 @@ class UserService {
       const accessToken = jwt.sign(accessPayload, secretKey, {
         expiresIn: '1h',
       });
-      return {
-        status: 'OK',
-        message: '토큰을 새로 갱신하였습니다.',
-        accessToken,
-      };
-    } else
-      return {
-        status: 'fail',
-        message: 'Refresh 토큰이 일치하지 않습니다',
-      };
+
+      return { accessToken };
+    } else {
+      throw new Error('토큰이 일치하지 않습니다');
+    }
   }
 
   async expandRefToken(uid: string, refreshToken: string) {
@@ -157,20 +149,18 @@ class UserService {
       const newToken = jwt.sign(refreshPayload, secretKey, {
         expiresIn: '14D',
       });
-      try {
-        await this.User.findOneAndUpdate(
-          { uid: user.uid },
-          {
-            refreshToken: newToken,
-          },
-          { returnOriginal: false }
-        );
-      } catch (err) {
-        throw new Error(' DB에 갱신한 토큰을 저장하는데 실패했습니다.');
-      }
+
+      await this.User.findOneAndUpdate(
+        { uid: user.uid },
+        {
+          refreshToken: newToken,
+        },
+        { returnOriginal: false }
+      );
       return newToken;
+    } else {
+      throw new Error('토큰이 일치하지 않습니다');
     }
-    return;
   }
 
   async authEmail(email: string) {
@@ -255,6 +245,7 @@ class UserService {
       } catch (err) {
         throw new Error('비밀번호 초기화 및 인증메일 전송에 실패하였습니다.');
       }
+
       return {
         status: 'OK',
         message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
