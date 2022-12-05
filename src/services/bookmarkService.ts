@@ -1,6 +1,7 @@
 import { bookmarkModel, bookmarkModelType } from '../models';
 import { BookmarkInterface } from '../models/schemas/bookmark';
-import { missingPersonService, userService } from '../services';
+import { missingPersonService } from '../services';
+import { logger } from '../winston';
 // 비즈니스 로직은 여기서!!
 class BookmarkService {
   private Bookmark: bookmarkModelType;
@@ -11,17 +12,22 @@ class BookmarkService {
   }
   //북마크 가져오기
   async findBookmark(uid: string) {
-    const bookmarkCase = await this.Bookmark.find({ uid }, { key: 1, _id: 0 });
-
-    return await Promise.all(
-      bookmarkCase.map((e) => {
-        return this.getCase(e.key);
-      })
-    );
+    return await this.Bookmark.find({ uid }).populate('key');
   }
 
+  private async isBookmarked(
+    bookmarkInfo: BookmarkInterface
+  ): Promise<boolean> {
+    const isBookmarked = await this.Bookmark.findOne(bookmarkInfo);
+    return !isBookmarked;
+  }
   //북마크 생성
   async createBookmark(bookmarkInfo: BookmarkInterface) {
+    const isBookmarked = await this.isBookmarked(bookmarkInfo);
+    if (!isBookmarked) {
+      logger.error('already created bookmark');
+      throw new Error('이미 북마크 한 사건입니다. ');
+    }
     return await this.Bookmark.create(bookmarkInfo);
   }
   async getCase(key: any) {
@@ -32,9 +38,6 @@ class BookmarkService {
     });
   }
 
-  async getUserInfo(uid: string) {
-    return await userService.getUserInfo(uid);
-  }
   //북마크 하나 삭제
   async deleteBookmark(info: BookmarkInterface) {
     return await this.Bookmark.findOneAndDelete(info);

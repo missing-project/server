@@ -18,8 +18,8 @@ export const bookmarkController: bookmarkControllerInterface = {
     const { uid } = req.body;
     const { key } = req.body;
     const info: BookmarkInterface = {
-      key,
       uid,
+      key,
     };
     const bookmark = await bookmarkService.createBookmark(info);
     res.json(bookmark);
@@ -32,11 +32,11 @@ export const bookmarkController: bookmarkControllerInterface = {
   },
 
   async deleteOneBookmark(req, res) {
-    const { key } = req.body;
     const { uid } = req.body;
+    const { key } = req.body;
     const info: BookmarkInterface = {
-      key,
       uid,
+      key,
     };
     const deleteOne = await bookmarkService.deleteBookmark(info);
     res.json(deleteOne);

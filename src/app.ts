@@ -33,11 +33,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get(endPoint.index, indexRouter);
-app.use(endPoint.user, loginRequired, userRouter);
-app.use(endPoint.missingPerson, missingPersonRouter);
-app.use(endPoint.bookmark, bookmarkRouter);
-app.use(endPoint.user, userRouter);
 app.use(endPoint.guest, guestRouter);
+app.use(endPoint.missingPerson, missingPersonRouter);
+app.use(endPoint.user, loginRequired, userRouter);
+app.use(endPoint.bookmark, loginRequired, bookmarkRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
@@ -49,10 +48,17 @@ app.listen(port, () => {
   logger.info(`Server listening on port: ${port}`);
 });
 
-cron.schedule('0 0 03 * * *', async () => {
-  try {
-    await api.createNewCase(1);
-  } catch (e) {
-    logger.error(e);
+cron.schedule(
+  '0 0 3 * * *',
+  async () => {
+    try {
+      await api.createNewCase(1);
+    } catch (e) {
+      logger.error(e);
+    }
+  },
+  {
+    scheduled: true,
+    timezone: 'Asia/Seoul',
   }
-});
+);

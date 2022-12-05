@@ -9,11 +9,10 @@ export interface UserInterface {
   uid: string;
   email: string;
   password: string;
-  name: string;
   refreshToken?: string;
-  device: string;
   role: string;
   active: boolean;
+  recentLogin?: Date;
 }
 
 export const UserSchema = new Schema<UserInterface>(
@@ -30,17 +29,10 @@ export const UserSchema = new Schema<UserInterface>(
       type: String,
       required: true,
     },
-    name: {
-      type: String,
-      required: true,
-    },
+
     refreshToken: {
       type: String,
       required: false,
-    },
-    device: {
-      type: String,
-      required: true,
     },
     role: {
       type: String,
@@ -50,9 +42,13 @@ export const UserSchema = new Schema<UserInterface>(
       type: Schema.Types.Boolean,
       required: true,
     },
+    recentLogin: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
     collection: 'user',
-  },
+  }
 );
