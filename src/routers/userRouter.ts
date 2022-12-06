@@ -5,7 +5,7 @@ import { asyncHandler } from '../utils';
 export const userRouter = Router();
 
 //유저정보 확인
-userRouter.get('/', asyncHandler(userController.getUser));
+userRouter.get('/me', asyncHandler(userController.getUser));
 //유저정보 수정
 userRouter.patch('/', asyncHandler(userController.updateUser));
 //탈퇴
