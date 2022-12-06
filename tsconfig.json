@@ -9,6 +9,12 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "sourceMap": true,
+    "paths": {
+      "*": ["./@types/*"]
+    },
+    "typeRoots": ["./@types", "./node_modules/@types"]
   }
 }

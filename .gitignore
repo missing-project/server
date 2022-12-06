@@ -3,7 +3,8 @@
 
 ### dotenv ###
 .env
-
+### vscode ###
+.vscode
 ### Node ###
 # Logs
 logs
@@ -161,3 +162,4 @@ dist
 # .pnp.*
 
 # End of https://www.toptal.com/developers/gitignore/api/dotenv,node,yarn
+.DS_STORE

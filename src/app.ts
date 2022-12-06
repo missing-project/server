@@ -3,28 +3,40 @@ import cors from 'cors';
 import createError from 'http-errors';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
-import logger from 'morgan';
+import Logger from 'morgan';
+import { logger } from './winston';
 
 import { port, mongoDBUri } from './config';
 import { errorHandler, loginRequired } from './middlewares';
-import { indexRouter, userRouter } from './routers';
+import {
+  indexRouter,
+  missingPersonRouter,
+  userRouter,
+  bookmarkRouter,
+  guestRouter,
+} from './routers';
 import { endPoint } from './constants';
+import { api } from './utils';
+import cron from 'node-cron';
 
 const app = express();
 
 mongoose.connect(mongoDBUri);
 mongoose.connection.on('connected', () => {
-  console.log(`Successfully connected to MongoDB: ${mongoDBUri}`);
+  logger.info(`Successfully connected to MongoDB: ${mongoDBUri}`);
 });
 
 app.use(cors());
-app.use(logger('dev'));
+app.use(Logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.get(endPoint.index, indexRouter);
+app.use(endPoint.guest, guestRouter);
+app.use(endPoint.missingPerson, missingPersonRouter);
 app.use(endPoint.user, loginRequired, userRouter);
+app.use(endPoint.bookmark, loginRequired, bookmarkRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
@@ -33,5 +45,20 @@ app.use(function (req, res, next) {
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`Server listening on port: ${port}`);
+  logger.info(`Server listening on port: ${port}`);
 });
+
+cron.schedule(
+  '0 0 3 * * *',
+  async () => {
+    try {
+      await api.createNewCase(1);
+    } catch (e) {
+      logger.error(e);
+    }
+  },
+  {
+    scheduled: true,
+    timezone: 'Asia/Seoul',
+  }
+);
