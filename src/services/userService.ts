@@ -22,7 +22,7 @@ class UserService {
       isAccess ? { uid, role } : { uid, role, date: new Date() },
       secretKey,
       {
-        expiresIn: isAccess ? '1h' : '14D',
+        expiresIn: isAccess ? '1m' : '14d',
       }
     );
   };
@@ -40,15 +40,15 @@ class UserService {
     this.User = userModel;
   }
 
-  async findUser(uid: string) {
-    return await this.User.findOne({ uid });
-  }
-
   async createUser(userInfo: UserInterface) {
     const { uid, email, password } = userInfo;
-
+    const userEmailValidation = await this.User.findOne({ email: email });
+    if (userEmailValidation) {
+      throw new Error(
+        '이 이메일은 이미 사용 중입니다. 다른 이메일을 입력해주세요'
+      );
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const registerInfo = {
       uid,
       email,
@@ -57,10 +57,6 @@ class UserService {
       active: true,
     };
     return await this.User.create(registerInfo);
-  }
-
-  async deleteUser(uid: string) {
-    return await this.User.remove({ uid });
   }
 
   //계정 로그인
@@ -112,58 +108,8 @@ class UserService {
     );
   }
 
-  //계정 활성화
-  async activeUser(uid: string) {
-    const filter = { uid };
-    const option = { returnOriginal: false };
-    return await this.User.findOneAndUpdate(filter, { active: true }, option);
-  }
-
-  // 계정 비활성화
-  async inactiveUser(uid: string) {
-    const filter = { uid };
-    const option = { returnOriginal: false };
-    return await this.User.findOneAndUpdate(filter, { active: false }, option);
-  }
-
-  async updateUser(userInfo: UserInterface) {
-    userInfo;
-    return await this.User.deleteOne({});
-  }
-
-  // 엑세스 토큰 재발급
-  async expandAccToken(_refreshToken: string, isLogin: boolean) {
-    const user = await this.User.findOne({ refreshToken: _refreshToken });
-    if (!user) {
-      throw new Error('해당하는 토큰에 유효한 사용자는 존재하지 않습니다');
-    }
-
-    if (_refreshToken !== user?.refreshToken) {
-      throw new Error(
-        'DB에 저장된 토큰과 일치하지 않습니다. 다시 로그인 해주세요'
-      );
-    }
-    const { uid, role } = user;
-    const accessToken = this.tokenCreate(true, uid, role);
-    let refreshToken = _refreshToken;
-
-    if (this.refreshExpireCheck(_refreshToken)) {
-      refreshToken = this.tokenCreate(false, uid, role);
-      await this.User.findOneAndUpdate(
-        { uid },
-        isLogin ? { refreshToken, recentLogin: Date.now() } : { refreshToken }
-      );
-    }
-
-    return { user, accessToken, refreshToken };
-  }
-
+  // 인증메일 보내기
   async authEmail(email: string) {
-    const userEmailValidation = await this.User.findOne({ email: email });
-    if (userEmailValidation) {
-      throw new Error('이 이메일은 사용중입니다. 다른 이메일을 입력해 주세요');
-    }
-
     const smtpTransport = nodemailer.createTransport({
       service: 'Naver',
       host: 'smtp.naver.com',
@@ -194,58 +140,73 @@ class UserService {
     const result = await smtpTransport.sendMail(mailOptions);
     return { result, code: number };
   }
-  async resetPassword(uid: string, email: string) {
-    const user = await this.User.findOne({ uid: uid, email: email });
+
+  // 엑세스 토큰 재발급
+  async expandAccToken(_refreshToken: string, isLogin: boolean) {
+    const user = await this.User.findOne({ refreshToken: _refreshToken });
     if (!user) {
-      throw new Error('입력하신 정보의 계정은 존재하지 않습니다');
-    } else {
-      const authNum = Math.random().toString(36).substring(2, 11);
-      const smtpTransport = nodemailer.createTransport({
-        service: 'Naver',
-        host: 'smtp.naver.com',
-        auth: {
-          user: process.env.SMTPID, // 네이버이메일
-          pass: process.env.SMTPPW, // 네이버비밀번호
-        },
-        port: 465,
-        tls: {
-          rejectUnauthorized: false,
-        },
-      });
-
-      const mailOptions = {
-        from: `missing<${process.env.SMTPID}>`,
-        to: email,
-        subject: '[Missing] 비밀번호 초기화 안내 ',
-        text:
-          '요청하신대로 비밀번호를 초기화 하였습니다. 다음의 문자를 입력하셔서 로그인 하신 후 비밀번호를 변경해주시기 바랍니다 : ' +
-          authNum,
-      };
-
-      try {
-        await smtpTransport.sendMail(mailOptions);
-      } catch (err) {
-        throw new Error('비밀번호 초기화 메일전송에 실패하였습니다');
-      }
-
-      try {
-        const password = await bcrypt.hash(authNum, 10);
-        await this.User.findOneAndUpdate(
-          { uid: user.uid },
-          {
-            password,
-          },
-          { returnOriginal: false }
-        );
-      } catch (err) {
-        throw new Error('비밀번호 초기화 및 인증메일 전송에 실패하였습니다.');
-      }
-
-      return {
-        status: 'OK',
-        message: '비밀번호 초기화 후 메일전송을 완료하였습니다.',
-      };
+      throw new Error('해당하는 토큰에 유효한 사용자는 존재하지 않습니다');
     }
+
+    if (_refreshToken !== user?.refreshToken) {
+      throw new Error(
+        'DB에 저장된 토큰과 일치하지 않습니다. 다시 로그인 해주세요'
+      );
+    }
+    const { uid, role } = user;
+    const accessToken = this.tokenCreate(true, uid, role);
+    let refreshToken = _refreshToken;
+
+    if (this.refreshExpireCheck(_refreshToken)) {
+      refreshToken = this.tokenCreate(false, uid, role);
+      await this.User.findOneAndUpdate(
+        { uid },
+        isLogin ? { refreshToken, recentLogin: Date.now() } : { refreshToken }
+      );
+    }
+
+    return { user, accessToken, refreshToken };
+  }
+
+  //계정 활성화
+  async activeUser(uid: string) {
+    const filter = { uid };
+    const option = { returnOriginal: false };
+    return await this.User.findOneAndUpdate(filter, { active: true }, option);
+  }
+
+  // 계정 비활성화
+  async inactiveUser(uid: string) {
+    const filter = { uid };
+    const option = { returnOriginal: false };
+    return await this.User.findOneAndUpdate(filter, { active: false }, option);
+  }
+
+  async findUser(uid: string) {
+    return await this.User.findOne({ uid });
+  }
+
+  async findUserByEmail(email: string) {
+    return await this.User.findOne({ email });
+  }
+
+  async updateUser(userInfo: UserInterface) {
+    const user = await this.User.findOne({ email: userInfo.email });
+    const hashedPassword = userInfo.password
+      ? await bcrypt.hash(userInfo.password, 10)
+      : null;
+    const userInfoUpdated = {
+      ...user,
+      ...(hashedPassword ? { password: hashedPassword } : {}),
+    };
+    return await this.User.findOneAndUpdate(
+      { email: userInfo.email },
+      userInfoUpdated
+    );
+  }
+
+  async deleteUser(uid: string) {
+    return await this.User.remove({ uid });
   }
 }
 
