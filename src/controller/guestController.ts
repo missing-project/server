@@ -1,4 +1,5 @@
 import { userService } from '../services';
+import { guestService } from '../services';
 import { AsyncRequestHandler } from '../types';
 
 interface guestControllerInterface {
@@ -7,6 +8,8 @@ interface guestControllerInterface {
   authEmail: AsyncRequestHandler;
   checkId: AsyncRequestHandler;
   searchId: AsyncRequestHandler;
+  getNotice: AsyncRequestHandler;
+  getAppinfo: AsyncRequestHandler;
 }
 
 export const guestController: guestControllerInterface = {
@@ -37,5 +40,15 @@ export const guestController: guestControllerInterface = {
     const { email } = req.body;
     const user = await userService.findUserByEmail(email);
     res.json({ id: user ? user.uid : null });
+  },
+
+  async getNotice(_, res) {
+    const notice = await guestService.getNotice();
+    res.json(notice);
+  },
+
+  async getAppinfo(_, res) {
+    const appinfo = await guestService.getAppinfo();
+    res.json(appinfo);
   },
 };
