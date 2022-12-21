@@ -12,7 +12,9 @@ class BookmarkService {
   //북마크 가져오기
   async findBookmark(uid: string) {
     const response = await this.Bookmark.find({ uid }).populate('key');
-    return response ? response.map(({ key }) => key) : [];
+    return response
+      ? response.map(({ key }) => key).filter((el) => typeof el !== 'string')
+      : [];
   }
 
   private async isBookmarked(
