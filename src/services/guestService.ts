@@ -1,17 +1,10 @@
-import {
-  appinfoModel,
-  appinfoModelType,
-  noticeModel,
-  noticeModelType,
-} from '../models';
+import { noticeModel, noticeModelType } from '../models';
 
 class GuestService {
   private noticeModel: noticeModelType;
-  private appinfoModel: appinfoModelType;
 
-  constructor(noticeModel: noticeModelType, appinfoModel: appinfoModelType) {
+  constructor(noticeModel: noticeModelType) {
     this.noticeModel = noticeModel;
-    this.appinfoModel = appinfoModel;
   }
 
   async getNotice() {
@@ -20,11 +13,14 @@ class GuestService {
   }
 
   async getAppinfo() {
-    const appinfo = await this.appinfoModel.findOne({});
-    return appinfo;
+    return {
+      appinfo: process.env.APP_VERSION ?? '0.1.1',
+      appstore: process.env.APPSTORE_LINK ?? '',
+      playstore: process.env.PLAYSTORE_LINK ?? '',
+    };
   }
 }
 
-const guestService = new GuestService(noticeModel, appinfoModel);
+const guestService = new GuestService(noticeModel);
 
 export { guestService };
