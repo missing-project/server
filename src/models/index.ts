@@ -3,7 +3,6 @@ import { UserSchema, UserInterface } from './schemas/user';
 import { CaseSchema, CaseInterface } from './schemas/case';
 import { BookmarkSchema, BookmarkInterface } from './schemas/bookmark';
 import { NoticeInterface, NoticeSchema } from './schemas/notice';
-import { AppinfoInterface, AppinfoSchema } from './schemas/appinfo';
 
 interface ModelIdentifierInterface {
   user: string;
@@ -31,16 +30,11 @@ const noticeModel = model<NoticeInterface>(
   modelIdentifier.notice,
   NoticeSchema
 );
-const appinfoModel = model<AppinfoInterface>(
-  modelIdentifier.appinfo,
-  AppinfoSchema
-);
 
 type userModelType = Model<UserInterface>;
 type caseModelType = Model<CaseInterface>;
 type bookmarkModelType = Model<BookmarkInterface>;
 type noticeModelType = Model<NoticeInterface>;
-type appinfoModelType = Model<AppinfoInterface>;
 
 // 이런 식으로 아래로 붙여주시고 아래 export 추가해주세요
 export {
@@ -52,6 +46,4 @@ export {
   bookmarkModelType,
   noticeModel,
   noticeModelType,
-  appinfoModel,
-  appinfoModelType,
 };
