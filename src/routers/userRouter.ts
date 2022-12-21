@@ -28,3 +28,5 @@ userRouter.get(
     await userController.tokenRefresh(req, res, next, false);
   })
 );
+
+userRouter.post('/changePassword', asyncHandler(userController.updateUser));
