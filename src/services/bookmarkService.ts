@@ -1,5 +1,6 @@
 import { bookmarkModel, bookmarkModelType } from '../models';
 import { BookmarkInterface } from '../models/schemas/bookmark';
+import { CaseInterface } from '../models/schemas/case';
 import { logger } from '../winston';
 // 비즈니스 로직은 여기서!!
 class BookmarkService {
@@ -11,9 +12,11 @@ class BookmarkService {
   }
   //북마크 가져오기
   async findBookmark(uid: string) {
-    const response = await this.Bookmark.find({ uid }).populate('key');
+    const response = await this.Bookmark.find({ uid }).populate<{
+      key: CaseInterface;
+    }>('key');
     return response
-      ? response.map(({ key }) => key).filter((el) => typeof el !== 'string')
+      ? response.map(({ key }) => key).filter((el) => !!el._id)
       : [];
   }
 
