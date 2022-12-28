@@ -14,7 +14,7 @@ class GuestService {
 
   async getAppinfo() {
     return {
-      appinfo: process.env.APP_VERSION ?? '0.1.1',
+      version: process.env.APP_VERSION ?? '0.1.1',
       appstore: process.env.APPSTORE_LINK ?? '',
       playstore: process.env.PLAYSTORE_LINK ?? '',
     };
