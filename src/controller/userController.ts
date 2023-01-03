@@ -13,8 +13,8 @@ interface userControllerInterface {
 
 export const userController: userControllerInterface = {
   async getUser(req, res) {
-    const uid = req.body.uid;
-    const users = await userService.findUser(uid);
+    const { uid } = req.body;
+    const users = await userService.findUserByUid(uid);
     res.json({ users });
   },
 
@@ -24,24 +24,25 @@ export const userController: userControllerInterface = {
   },
 
   async updateUser(req, res) {
-    const user = await userService.updateUser(req.body);
+    const { uid } = req.body;
+    const user = await userService.updateUser(uid, req.body);
     res.json({ user });
   },
 
   async deleteUser(req, res) {
-    const uid = req.body.uid;
+    const { uid } = req.body;
     const user = await userService.deleteUser(uid);
     res.json({ user });
   },
 
   async activeUser(req, res) {
-    const uid = req.body.uid;
+    const { uid } = req.body;
     const user = await userService.activeUser(uid);
     res.json({ user });
   },
 
   async inactiveUser(req, res) {
-    const uid = req.body.uid;
+    const { uid } = req.body;
     const user = await userService.activeUser(uid);
     res.json({ user });
   },
