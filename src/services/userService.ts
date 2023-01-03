@@ -3,8 +3,8 @@ import { UserInterface, LoginInterface } from '../models/schemas/user';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
 import differenceInDays from 'date-fns/differenceInDays';
+import { nodeMailer } from '../utils/nodeMailer';
 
 dotenv.config();
 
@@ -110,34 +110,19 @@ class UserService {
 
   // 인증메일 보내기
   async authEmail(email: string) {
-    const smtpTransport = nodemailer.createTransport({
-      service: 'Naver',
-      host: 'smtp.naver.com',
-      auth: {
-        user: process.env.SMTPID,
-        pass: process.env.SMTPPW,
-      },
-      port: 465,
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
     const generateRandom = (min: number = 111111, max: number = 999999) => {
       const ranNum = Math.floor(Math.random() * (max - min + 1)) + min;
       return ranNum;
     };
 
     const number = generateRandom();
-    const mailOptions = {
-      from: `missing<${process.env.SMTPID}>`,
+    const mailOption = {
       to: email,
       subject: '[Missing]이메일 인증 요청',
-      text:
-        '다음 숫자 6자리를 이메인 인증 칸란에 기입해주시기 바랍니다. : ' +
-        number,
+      text: `다음 숫자 6자리를 이메일 인증 칸란에 기입해주시기 바랍니다: ${number}`,
     };
 
-    const result = await smtpTransport.sendMail(mailOptions);
+    const result = await nodeMailer(mailOption);
     return { result, code: number };
   }
 
@@ -182,7 +167,7 @@ class UserService {
     return await this.User.findOneAndUpdate(filter, { active: false }, option);
   }
 
-  async findUser(uid: string) {
+  async findUserByUid(uid: string) {
     return await this.User.findOne({ uid });
   }
 
@@ -190,23 +175,33 @@ class UserService {
     return await this.User.findOne({ email });
   }
 
-  async updateUser(userInfo: UserInterface) {
-    const user = await this.User.findOne({ email: userInfo.email });
+  async findUser(userInfo: Partial<UserInterface>) {
+    return await this.User.findOne(userInfo);
+  }
+
+  async updateUser(uid: string, userInfo: Partial<UserInterface>) {
     const hashedPassword = userInfo.password
       ? await bcrypt.hash(userInfo.password, 10)
       : null;
     const userInfoUpdated = {
-      ...user,
+      ...userInfo,
       ...(hashedPassword ? { password: hashedPassword } : {}),
     };
-    return await this.User.findOneAndUpdate(
-      { email: userInfo.email },
-      userInfoUpdated
-    );
+    return await this.User.findOneAndUpdate({ uid }, userInfoUpdated);
   }
 
   async deleteUser(uid: string) {
     return await this.User.remove({ uid });
+  }
+
+  async passwordEmail(email: string, password: string) {
+    const mailOption = {
+      to: email,
+      subject: '[Missing]임시 비밀번호 발급',
+      text: `다음 문자를 비밀번호로 사용하십시오: ${password}`,
+    };
+    const result = await nodeMailer(mailOption);
+    return result;
   }
 }
 

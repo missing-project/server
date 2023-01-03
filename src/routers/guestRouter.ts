@@ -11,3 +11,4 @@ guestRouter.post('/register', asyncHandler(guestController.registerUser));
 guestRouter.post('/searchId', asyncHandler(guestController.searchId));
 guestRouter.get('/notice', asyncHandler(guestController.getNotice));
 guestRouter.get('/appinfo', asyncHandler(guestController.getAppinfo));
+guestRouter.post('/resetPassword', asyncHandler(guestController.resetPassword));
