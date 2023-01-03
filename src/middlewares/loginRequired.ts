@@ -21,8 +21,7 @@ export async function loginRequired(
   try {
     const secretKey = process.env.JWT_SECRET_KEY;
     const jwtDecoded = jwt.verify(token, secretKey);
-    const uid = (<{ uid: string }>jwtDecoded).uid;
-    const role = (<{ role: string }>jwtDecoded).role;
+    const { uid, role } = <{ uid: string; role: string }>jwtDecoded;
     req.body.uid = uid;
     req.body.role = role;
     next();

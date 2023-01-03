@@ -10,6 +10,7 @@ interface guestControllerInterface {
   searchId: AsyncRequestHandler;
   getNotice: AsyncRequestHandler;
   getAppinfo: AsyncRequestHandler;
+  resetPassword: AsyncRequestHandler;
 }
 
 export const guestController: guestControllerInterface = {
@@ -32,7 +33,7 @@ export const guestController: guestControllerInterface = {
 
   async checkId(req, res) {
     const { id } = req.body;
-    const user = await userService.findUser(id);
+    const user = await userService.findUserByUid(id);
     res.json({ isUsable: Boolean(!user?.uid) });
   },
 
@@ -50,5 +51,20 @@ export const guestController: guestControllerInterface = {
   async getAppinfo(_, res) {
     const appinfo = await guestService.getAppinfo();
     res.json(appinfo);
+  },
+
+  async resetPassword(req, res) {
+    const { uid, email } = req.body;
+    const user = await userService.findUser({ uid, email });
+    if (!user) {
+      throw new Error('해당 정보에 맞는 사용자가 존재하지 않습니다');
+    }
+    const randomStr = Math.random().toString(36).substring(2, 12);
+    const result = await userService.passwordEmail(email, randomStr);
+    await userService.updateUser(uid, {
+      email,
+      password: randomStr,
+    });
+    res.json(result);
   },
 };
