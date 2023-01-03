@@ -29,4 +29,4 @@ userRouter.get(
   })
 );
 
-userRouter.post('/changePassword', asyncHandler(userController.updateUser));
+userRouter.post('/changePassword', asyncHandler(userController.changePassword));
