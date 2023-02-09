@@ -1,9 +1,9 @@
-import axios from 'axios';
-import crypto from 'crypto';
+import axios from "axios";
+import crypto from "crypto";
 
-import { caseModel, caseModelType } from '../models';
-import { CaseInterface, CaseArrayInterface } from '../models/schemas/case';
-import { logger } from '../winston';
+import { caseModel, caseModelType } from "../models";
+import { CaseInterface, CaseArrayInterface } from "../models/schemas/case";
+import { logger } from "../winston";
 import {
   OPEN_API_URI,
   API_IMG,
@@ -11,8 +11,8 @@ import {
   KAKAO_MAP,
   KAKAO_AUTH,
   KAKAO_HOST,
-} from '../config';
-import { parseDate } from './parsedate';
+} from "../config";
+import { parseDate } from "./parsedate";
 
 class Scheduler {
   private Case: caseModelType;
@@ -47,16 +47,16 @@ class Scheduler {
     try {
       return await this.Case.deleteMany({});
     } catch (e) {
-      logger.error('fail deleteCase', e);
+      logger.error("fail deleteCase", e);
     }
   }
 
   async setObj(obj: any): Promise<CaseInterface> {
-    const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : '';
-    const shasum = crypto.createHash('sha512');
+    const num = obj.msspsnIdntfccd ? obj.msspsnIdntfccd : "";
+    const shasum = crypto.createHash("sha512");
     const nm: string = obj.nm;
     shasum.update(`${nm}${num}`);
-    const output: string = shasum.digest('base64').substring(0, 50);
+    const output: string = shasum.digest("base64").substring(0, 50);
     const { x, y }: CaseInterface = await this.getLocation(obj);
 
     obj.occrDate = parseDate(obj.occrde);
@@ -69,7 +69,7 @@ class Scheduler {
 
     return new Promise((resolve, reject) => {
       resolve(obj);
-      reject(new Error('fail setObj'));
+      reject(new Error("fail setObj"));
     });
   }
 
@@ -79,7 +79,7 @@ class Scheduler {
 
       const { data } = await axios.get(uri, {
         headers: {
-          Accept: 'application/json',
+          Accept: "application/json",
         },
       });
 
@@ -89,18 +89,18 @@ class Scheduler {
         })
       );
 
-      const newCase: CaseArrayInterface = {
-        cases: cases,
-      };
+      // const newCase: CaseArrayInterface = {
+      //   cases: cases,
+      // };
 
-      return await this.createCase(newCase);
+      return await this.createCase(cases);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        logger.error('error message: ', error.message);
+        logger.error("error message: ", error.message);
         return error.message;
       } else {
-        logger.error('unexpected error: ', error);
-        return 'An unexpected error occurred';
+        logger.error("unexpected error: ", error);
+        return "An unexpected error occurred";
       }
     }
   }
@@ -122,15 +122,15 @@ class Scheduler {
       }
       return new Promise((resolve, reject) => {
         resolve(obj);
-        reject(new Error('fail getLocation'));
+        reject(new Error("fail getLocation"));
       });
     } catch (e) {
-      logger.error('fail geaLocation', e);
+      logger.error("fail geaLocation", e);
     }
   }
 
-  async createCase(data: CaseArrayInterface) {
-    return await this.Case.insertMany(data.cases);
+  async createCase(data: CaseInterface[]) {
+    return await this.Case.insertMany(data);
   }
 }
 
